@@ -20,7 +20,7 @@ class App extends Component {
     this.gamesRef = db.collection("games");
     this.usersRef = db.collection("users");
 
-    // this.fetchUserGames();
+    this.fetchUserGames();
     // db_users.forEach( user => {
     //   if(user.games && user.games.length){
     //     const path = "users/" + user.id + "/games/";
