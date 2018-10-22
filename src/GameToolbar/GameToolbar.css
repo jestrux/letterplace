@@ -1,0 +1,76 @@
+#header {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    z-index: 100000;
+}
+
+#listHeader{
+    height: 60px;
+    padding: 0 16px;
+    padding-right: 8px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    background: #fff;
+}
+
+#listHeader #appLogo{
+    width: 40px;
+    height: 40px;
+    margin-right: 1em;
+    display: none;
+}
+
+#listHeader button{
+    font-size: 20px;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: var(--theme-color-green);
+}
+#listHeader #theDp{
+    height: 40px; width: 40px;
+    border-radius: 50%; 
+    background-color: #eee; 
+    background-size: cover;
+    background-position: center;
+    margin-left: 12px;
+}
+#listHeader #user{
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+#detailHeader{
+    padding: 8px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#detailHeader button{
+    /*border: 1px solid #444;*/
+    border: none;
+    padding: 5px;
+    background: transparent;
+    color: #444;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#detailHeader #submitBtn{
+    /*font-size: 12px;*/
+    background-color: #03a9f4;
+    color: white;
+    border-radius: 3px;
+}
+
+#detailHeader button:focus, 
+#detailHeader button:active{
+    outline: none;
+    background: transparent;
+}
