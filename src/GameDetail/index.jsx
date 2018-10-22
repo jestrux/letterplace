@@ -9,11 +9,11 @@ const GameDetail = ( { game, user } ) => {
             <div id="gamePlayers">
                 <div className="game-player" style={{ color: game.colors[0] }}>
                     <img src={game.players[0].dp} alt=""/>
-                    { game.players[0].points }
+                    <span>{ game.players[0].points }</span>
                 </div>
                 <div className="game-player" style={{ color: game.colors[1] }}>
                     <img src={game.players[1].dp} alt=""/>
-                    { game.players[1].points }
+                    <span>{ game.players[1].points }</span>
                 </div>
             </div>
             <div id="gameTiles">
