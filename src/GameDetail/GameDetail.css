@@ -22,13 +22,10 @@
 }
 
 .game-player {
-    text-align: center;
-    font-weight: bold;
-    font-size: 9vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 0 7vw;
+    padding: 0 5vw;
     color: #a77;
     border-color: currentColor;
     position: relative;
@@ -47,13 +44,16 @@
 }
 
 .game-player span{
+    text-align: center;
+    font-weight: bold;
+    font-size: 9vw;
     position: relative;
 }
 
 .game-player span:after{
     content: '';
     position: absolute;
-    top: -36%;
+    top: -4vw;
     left: 0;
     right: 0;
     width: 0;
