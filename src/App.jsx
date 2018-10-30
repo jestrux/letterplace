@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import GameToolbar from './GameToolbar';
 import GameList from './GameList';
 import GameDetail from './GameDetail';
 
@@ -15,12 +14,19 @@ import { auth_user, db_users } from './data/users';
 import { db } from './data/firebase';
 
 class App extends Component {
-  state = {  user: auth_user, fetchingGames: false, cur_page: 'game-list', cur_game: 0, tiles_played:false };
+  state = {  
+    user: auth_user, 
+    fetchingGames: false, 
+    cur_page: 'game-list', 
+    cur_game: 0, 
+    tiles_played:false 
+  };
   componentWillMount(){
     this.gamesRef = db.collection("games");
     this.usersRef = db.collection("users");
 
-    this.fetchUserGames();
+    // this.fetchUserGames();
+    
     // db_users.forEach( user => {
     //   if(user.games && user.games.length){
     //     const path = "users/" + user.id + "/games/";
@@ -57,7 +63,8 @@ class App extends Component {
     this.setState( { cur_page: 'game-list', cur_game: null } );
   }
   
-  handleViewGame = ( idx ) => {
+  handleViewGame = ( idx, image ) => {
+    console.log(image);
     this.setState( { cur_page: 'game-detail', cur_game: idx } );
   }
 
@@ -65,23 +72,19 @@ class App extends Component {
     const { user, fetchingGames, cur_page, cur_game, tiles_played } = this.state;
 
     return (
-      <div className="App">
-        <GameToolbar 
-          page={cur_page} 
-          user={user} tilesPlayed={tiles_played}
-          onGoHome={ this.handleGoHome } />
-          
-        { cur_page ==='game-list' && 
+      <div className="App">          
+        {/* { cur_page ==='game-list' &&  */}
           <GameList 
             user={user} 
             games={user.games} loading={fetchingGames}
-            onViewGame={ ( idx ) => this.handleViewGame(idx) } />
-        }
+            onViewGame={ ( idx, image ) => this.handleViewGame(idx, image) } />
+        {/* } */}
         
         { cur_page ==='game-detail' && 
           <GameDetail
             user={user} 
-            game={user.games[cur_game]} />}
+            game={user.games[cur_game]}
+            onGoHome={ this.handleGoHome } />}
       </div>
     );
   }

@@ -53,12 +53,12 @@
 #detailHeader button{
     /*border: 1px solid #444;*/
     border: none;
-    padding: 5px;
+    padding: 5px 8px;
     background: transparent;
     color: #444;
     text-transform: uppercase;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: bold;
 }
 
@@ -67,6 +67,13 @@
     background-color: #03a9f4;
     color: white;
     border-radius: 3px;
+    font-weight: normal;
+}
+
+#detailHeader #submitBtn.disabled{
+    pointer-events: none;
+    background-color: #82bad4;
+    color: #cee2eb;
 }
 
 #detailHeader button:focus, 
