@@ -3,9 +3,33 @@ import './GameDetail.css';
 
 import GameToolbar from '../GameToolbar';
 import GameTile from './GameTile';
+import { getTilesImage } from '../LetterPlaceHelpers';
 
 class GameDetail extends React.Component {
-    state = { playedTiles: [], playedWord: '' }
+    state = { game: {}, playedTiles: [], playedWord: '' }
+
+    componentWillReceiveProps(newProps){
+        if(!newProps.game)
+            return;
+
+        let { game } = newProps;
+        if(game && game.players){
+            this.setState({game, playedTiles: []}, () => {
+                this.setWord();
+                this.setScore();
+            });
+        }
+    }
+    
+    componentWillMount(){
+        let { game } = this.props;
+        if(game && game.players){
+            this.setState({game, playedTiles: []}, () => {
+                this.setWord();
+                this.setScore();
+            });
+        }
+    }
 
     playTile = (index, tile) => {
         const clonedTile = JSON.parse(JSON.stringify(tile));
@@ -15,6 +39,7 @@ class GameDetail extends React.Component {
         clonedTile.original_index = index;
         this.setState({playedTiles: [...this.state.playedTiles, clonedTile]}, () => {
             this.setWord();
+            this.setScore();
 
             const playedTiles = document.querySelectorAll('#playedTiles .GameTile');
             const toTile = playedTiles[this.state.playedTiles.length - 1];
@@ -26,7 +51,30 @@ class GameDetail extends React.Component {
     unPlayTile = (index) => {
         this.setState({playedTiles: this.state.playedTiles.filter( (tile, i) => i !== index)}, () => {
             this.setWord();
+            this.setScore();
         });
+    }
+    
+    setScore = () => {
+        let { user, game } = this.props;
+        game = JSON.parse(JSON.stringify(game));
+        const gamePlayers = game.players;
+
+        if(!gamePlayers){
+            return;
+        }
+
+        const curUserIdx = gamePlayers.findIndex(p => p.id === user.id);
+        const otherUserIdx = curUserIdx === 0 ? 1 : 0;
+        const otherUserTiles = this.state.playedTiles.filter(p => p.owner === otherUserIdx && !p.locked);
+        const newTiles = this.state.playedTiles.filter(p => p.owner === -1);
+        const addedPoints = otherUserTiles.length + newTiles.length;
+
+        let players = JSON.parse(JSON.stringify(gamePlayers));
+        players[curUserIdx].points += addedPoints;
+        players[otherUserIdx].points -= otherUserTiles.length;
+        game.players = players;
+        this.setState({game});
     }
     
     setWord = () => {
@@ -34,7 +82,10 @@ class GameDetail extends React.Component {
     }
     
     clearPlayedTiles = () => {
-        this.setState({playedTiles: []});
+        this.setState({playedTiles: []}, () => {
+            this.setWord();
+            this.setScore();
+        });
     }
 
     flipTile = (from, to, back) => {
@@ -67,25 +118,79 @@ class GameDetail extends React.Component {
             })
         }, 10);
     }
+
+    submitPlayedWord = () => {
+        let {game, playedTiles, playedWord} = this.state;
+        game = JSON.parse(JSON.stringify(game));
+        const { players, words } = game;
+        const curUserIdx = players.findIndex(p => p.id === this.props.user.id);
+        const notTurn = game.turn !== curUserIdx;
+
+        if(notTurn){
+            return alert("Please wait your turn!!!");
+        }
+
+        let parentWord = words && words.length ? words.find(w => w.word.indexOf(playedWord) !== -1) : null;
+        if(parentWord){
+            parentWord = parentWord.word;
+            if(parentWord.length === playedWord.length)
+                window.alert(`${playedWord} was already played!`);
+            else
+                window.alert(`${playedWord} is subword of ${parentWord}`);
+        }else{
+            const playedTileIndexes = playedTiles.map(t => t.original_index);
+            const newWord = {
+                player: game.turn,
+                word: playedWord,
+                letters: playedTileIndexes
+            };
+            if(!game.words){
+                game.words = [];
+            }
+
+            game.words.push(newWord);
+
+            game.lastword = playedWord;
+
+            game.tiles = game.tiles.map((tile, index) => {
+                if(playedTileIndexes.indexOf(index) !== -1){
+                    tile.played = true;
+                    tile.lastplayed = true;
+                    if(tile.locked){
+                        tile.locked = false;
+                    }else{
+                        tile.owner = game.turn;
+                    }
+                }else{
+                    tile.lastplayed = false;
+                }
+
+                return tile;
+            });
+            game.summary_image = getTilesImage(game.tiles, game.colors);
+            this.props.onGameChanged(game);
+        }
+    }
     
     render() { 
-        const { game, user } = this.props;
-        const { tiles } = game;
+        const { game } = this.state;
+        const { tiles, words } = game;
         const { playedTiles, playedWord } = this.state;
         const playing = playedTiles.length > 0;
         const played_indexes = playedTiles.map( t => t.original_index );
         const invalidWord = !playedWord.length || window.letterpressDictionary.indexOf(playedWord.toLowerCase()) === -1;
+        const subWordAlreadyPlayed = playedWord.length && words && words.length && words.filter(w => w.word.indexOf(playedWord) !== -1).length > 0;
 
         const header = (
             <div id="detailHeader">
-                { !playing && <button onClick={ this.props.onGoHome }>back</button> }
+                { !playing && <button id="backButton" onClick={ this.props.onGoHome }>back</button> }
     
                 { playing && 
                     <React.Fragment>
                         <button onClick={ this.clearPlayedTiles }>clear</button>
                         <button id="submitBtn"
                             onClick={ this.submitPlayedWord }
-                            className={ invalidWord ? 'disabled' : '' }>submit</button>
+                            className={ (invalidWord ? 'disabled ' : '') + (subWordAlreadyPlayed ? 'error' : '') }>submit</button>
                     </React.Fragment>
                 }
             </div>

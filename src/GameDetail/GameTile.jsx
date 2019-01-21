@@ -1,21 +1,23 @@
 import React from 'react';
+import * as tinycolor from 'tinycolor2';
 import './GameTile.css';
 
 const GameTile = ( props ) => {
     function getDarkerShade(color) {
-        const percent = -20;
+        return tinycolor(color).darken(15).toHexString();
+        // const percent = -20;
 
-        if(color[0] === "#")
-            color = color.substr(1, color.length - 1);
+        // if(color[0] === "#")
+        //     color = color.substr(1, color.length - 1);
     
     
-        var num = parseInt(color,16),
-            amt = Math.round(2.55 * percent),
-            R = (num >> 16) + amt,
-            B = (num >> 8 & 0x00FF) + amt,
-            G = (num & 0x0000FF) + amt;
+        // var num = parseInt(color,16),
+        //     amt = Math.round(2.55 * percent),
+        //     R = (num >> 16) + amt,
+        //     B = (num >> 8 & 0x00FF) + amt,
+        //     G = (num & 0x0000FF) + amt;
     
-        return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
+        // return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
     }
 
     const { tile, background, hidden } = props;

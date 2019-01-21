@@ -119,3 +119,79 @@
 #gameTiles{
     flex-wrap: wrap;
 }
+
+#submitBtn:not(.disabled).error{
+    background: #da1d1d !important;
+}
+
+@media all and (min-width: 800px){
+    #GameDetail{
+        height: 100%;
+        position: relative;
+        /* left: 400px; */
+        max-width: 600px;
+        margin: auto;
+        overflow: visible;
+    }
+
+    #GameDetail #header {
+        position: absolute;
+        top: 2%;
+        left: -20%;
+        width: 140%;
+        z-index: 100000;
+    }
+    
+    #GameDetail #backButton {
+        display: none;
+    }
+
+    #gamePlayers{
+        transform: translateY(20%);
+    }
+    
+    #gamePlayers:not(.visible){
+        transform: translateY(-5%) scale(0.8);
+    }
+
+    .game-player {
+        padding: 0 40px;
+    }
+    
+    .game-player img{
+        margin-bottom: 0;
+        width: 70px;
+        height: 70px;
+        min-height: 0;
+        min-width: 0;
+        border: 5px solid;
+    }
+    
+    .game-player span{
+        font-size: 30px;
+    }
+    
+    .game-player span:after{
+        top: 38px;
+        border-width: 10px;
+        border-top-width: 20px;
+    }
+
+    #playedTiles{
+        position: relative;
+        bottom: auto;
+        top: 0;
+        width: 100%;
+        height: 75px;
+        padding: 10px 0;
+    }
+    
+    #playedTiles .GameTile{
+        max-width: 85px;
+    }
+
+    #gameTiles{
+        margin: auto;
+        max-width: 475px;
+    }
+}

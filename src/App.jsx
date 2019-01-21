@@ -63,6 +63,21 @@ class App extends Component {
     this.setState( { cur_page: 'game-list', cur_game: null } );
   }
   
+  handleGameChanged = (game) => {
+    const next = game.next; 
+    const turn = game.turn; 
+    game.turn = next;
+    game.next = turn;
+    game.began = true;
+
+    let user = JSON.parse(JSON.stringify(this.state.user));
+    let games = user.games;
+    games[this.state.cur_game] = game;
+    user.games = games;
+
+    this.setState( { user } );
+  }
+  
   handleViewGame = ( idx, image ) => {
     console.log(image);
     this.setState( { cur_page: 'game-detail', cur_game: idx } );
@@ -76,15 +91,17 @@ class App extends Component {
         {/* { cur_page ==='game-list' &&  */}
           <GameList 
             user={user} 
+            currentGame={cur_game}
             games={user.games} loading={fetchingGames}
             onViewGame={ ( idx, image ) => this.handleViewGame(idx, image) } />
         {/* } */}
         
-        { cur_page ==='game-detail' && 
+        { (cur_page === 'game-detail' || window.innerWidth > 800) && 
           <GameDetail
             user={user} 
             game={user.games[cur_game]}
-            onGoHome={ this.handleGoHome } />}
+            onGoHome={ this.handleGoHome }
+            onGameChanged={ this.handleGameChanged } />}
       </div>
     );
   }

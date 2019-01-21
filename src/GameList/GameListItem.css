@@ -92,3 +92,18 @@
     margin-left: 0;
     font-size: 18px;
 }
+
+@media all and (min-width: 800px){
+    .GameListItem{
+        background: transparent;
+    }
+    
+    .GameListItem.selected{
+        background:#f2f3f1;
+        background: rgba(62, 134, 26, 0.12);
+    }
+    
+    .GameListItem.selected:after{
+        display: none;
+    }
+}

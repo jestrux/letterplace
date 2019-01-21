@@ -1,0 +1,24 @@
+.App{
+    position: relative;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 100vw;
+    max-width: 1100px;
+    height: 100vh;
+    max-height: 700px;
+    border: 1px solid #8ac34a;
+    border-radius: 3px;
+    overflow: hidden;
+    background: transparent;
+    display: flex;
+}
+
+@media all and (max-width: 800px){
+    .App {
+        max-height: 100vh;
+        border: none;
+        display: block;
+        background: #fff;
+    }
+}

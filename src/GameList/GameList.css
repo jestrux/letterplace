@@ -1,5 +1,31 @@
-#GameList{
+#GameList {
     padding-top: 60px;
     height: 100vh;
+    max-width: 400px;
+    flex-basis: 400px;
     overflow: auto;
+    position: relative;
+    border-right: 1px solid #8ac34a;
+    border-color: rgba(150, 193, 102, 0.46);
+}
+
+#GameList #header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100000;
+}
+
+#GameList #listHeader {
+    padding: 8px 20px;
+    padding-right: 14px;
+    background: transparent;
+}
+
+@media all and (max-width: 800px){
+    #GameList{
+        max-width: 100vw;
+        margin: 0;
+    }
 }

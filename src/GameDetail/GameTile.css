@@ -9,3 +9,13 @@
     font-size: 1.8em;
     font-weight: bold;
 }
+
+@media all and (min-width: 800px){
+    .GameTile{
+        width: 95px;
+        height: 95px;
+        font-size: 1.8em;
+        cursor: default;
+        background-color: #f2f2f2;
+    }
+}

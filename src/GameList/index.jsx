@@ -48,7 +48,7 @@ const GameList = ( props ) => {
                     loading && <p className="text-center">Fetching your games....</p>
                 }
                 { games.map( (game, index) => (
-                        <GameListItem onClicked={ ( image ) => handleClicked(index, image) } key={ game.id } game={game} user={user} />
+                        <GameListItem selected={props.currentGame === index} onClicked={ ( image ) => handleClicked(index, image) } key={ game.id } game={game} user={user} />
                     ))
                 }
             </div>

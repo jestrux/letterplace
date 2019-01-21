@@ -28,7 +28,8 @@ const GameListItem = ( props ) => {
     }
 
     return (
-        <div className="GameListItem" onClick={ props.onClicked }>
+        <div className={'GameListItem ' + (props.selected ? 'selected' : '')} 
+            onClick={ props.onClicked }>
             <div>
                 <div id="preview" className="tiles-preview" style={{ backgroundImage: `url(${game.summary_image})` }}></div>
             </div>
