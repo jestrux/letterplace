@@ -24,7 +24,7 @@ const Login = ( props ) => {
         const auth_provider = provider === 'facebook' ? 
             fb_auth_provider : google_auth_provider;
 
-        auth.signInWithPopup(auth_provider)
+        auth.signInWithRedirect(auth_provider)
             .then((result) => {
                 console.log("Login from popup successful", result);
                 onLoggedin(result.user)
