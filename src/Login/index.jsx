@@ -11,6 +11,7 @@ const Login = ( props ) => {
 
     useEffect(() => {
         if(!authenticating && props.sessionUser){
+            console.log("First time login triggered");
             setAuthenticating(true);
             onLoggedin(props.sessionUser);
         }
@@ -24,11 +25,14 @@ const Login = ( props ) => {
             fb_auth_provider : google_auth_provider;
 
         auth.signInWithPopup(auth_provider)
-            .then((result) => onLoggedin(result.user, provider))
+            .then((result) => {
+                console.log("Login from popup successful", result);
+                onLoggedin(result.user)
+            })
             .catch((error) => {
+                console.log(`${provider} Login failed!`, error)
                 setAuthenticating(false, () => {
                     // alert(`${provider} Login failed!`);
-                    console.log(`${provider} Login failed!`, error)
                 });
             });
     }
@@ -37,6 +41,7 @@ const Login = ( props ) => {
         const userRef = db.doc("users/" + user.uid);
         userRef.get().then(function(doc) {
             if (doc.exists){
+                console.log("User found in DB");
                 props.onLogin(doc.data());
             }
             else {
@@ -44,9 +49,9 @@ const Login = ( props ) => {
                 registerNewUser(user);
             }
         }).catch(function(error) {
+            console.log("Error getting user document:", error)
             setAuthenticating(false, () => {
                 // alert("Error getting document!")
-                console.log("Error getting document:", error)
             });
         });
     }
@@ -64,11 +69,12 @@ const Login = ( props ) => {
         const userRef = db.doc("users/" + user.uid);
         userRef.set(newUser)
             .then(() => {
+                console.log("User successfully registered");
                 props.onLogin(newUser);
             })
             .catch(error => {
-                props.onLogin(newUser);
                 console.log("Error registering user:", error)
+                props.onLogin(newUser);
             });
     }
 
