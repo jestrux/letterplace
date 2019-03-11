@@ -27,7 +27,7 @@ const Login = ( props ) => {
             .then((result) => onLoggedin(result.user, provider))
             .catch((error) => {
                 setAuthenticating(false, () => {
-                    alert(`${provider} Login failed!`);
+                    // alert(`${provider} Login failed!`);
                     console.log(`${provider} Login failed!`, error)
                 });
             });
@@ -45,7 +45,7 @@ const Login = ( props ) => {
             }
         }).catch(function(error) {
             setAuthenticating(false, () => {
-                alert("Error getting document!")
+                // alert("Error getting document!")
                 console.log("Error getting document:", error)
             });
         });

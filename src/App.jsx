@@ -77,6 +77,8 @@ class App extends Component {
   }
 
   handleLogin = (user) => {
+    console.log("Login complete, fetching games for: ", user);
+    
     this.setState({ user }, () => {
       this.fetchUserGames();
       this.unsubscribeAuthListener();
