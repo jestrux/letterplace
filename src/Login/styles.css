@@ -1,0 +1,68 @@
+.loginScreen{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100*var(--vh));
+    width: 100vw;
+}
+.loginScreen h3, .loginScreen p{
+    margin: 0;
+    font-family: consolas;
+}
+.loginScreen h3{
+    font-size: 25px;
+}
+.loginScreen p{
+    font-size: 18px;
+}
+.loginScreen .logo-image{
+    height:150px;width:150px;
+    margin-bottom: 10px;
+}
+.layout:not([hidden]){
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.loginScreen button{
+    position: relative;
+    border: none;
+    font-size: 18px;
+    min-width: 200px;
+    padding: 10px 20px;
+    height: 43px;
+    overflow: hidden;
+    color: #555;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-top: 30px;
+    outline: none;
+}
+.loginScreen button.fb{
+    border: none;
+    background-color: #3b5998;
+    color: #fff;
+    color: #c0cce5;
+}
+.loginScreen button + button{
+    margin-top: 15px;
+}
+
+.loginScreen button.loading span{
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.loginScreen button svg{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 30px;
+    height: 30px;
+    fill: #333;
+}

@@ -14,9 +14,11 @@ const GameList = ( props ) => {
 
 			Letterplace
 
-			<div id="user">
+			{/* <div id="user">
 				<div id="theDp" style={{ backgroundImage: `url(${user.dp})` }}></div>
-			</div>
+			</div> */}
+
+            <button id="logoutBtn" onClick={props.onLogout}>Logout</button>
 		</div>
     );
 

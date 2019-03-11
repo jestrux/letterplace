@@ -62,6 +62,18 @@
     font-weight: bold;
 }
 
+#logoutBtn{
+    letter-spacing: 0.05em;
+    font-size: 14px !important;
+    padding: 8px 12px !important;
+    text-transform: uppercase;
+    color: #555 !important;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    outline: none;
+    margin-left: auto;
+}
+
 #detailHeader #submitBtn{
     /*font-size: 12px;*/
     background-color: #03a9f4;

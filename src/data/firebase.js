@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-// import 'firebase/auth';
+import 'firebase/auth';
 import 'firebase/firestore';
 
 // Initalize and export Firebase.
@@ -11,10 +11,10 @@ const config = {
   storageBucket: "letterplace-c103c.appspot.com",
   messagingSenderId: "658174549550"
 };
-firebase.initializeApp(config);
 
-const firestore = firebase.firestore();
+const app = firebase.initializeApp(config);
 
+const firestore = app.firestore();
 // Disable deprecated features
 firestore.settings({
   timestampsInSnapshots: true
@@ -23,3 +23,6 @@ firestore.settings({
 // firestore.enablePersistence();
 
 export const db = firestore;
+export const auth = app.auth()
+export const google_auth_provider = new firebase.auth.GoogleAuthProvider()
+export const fb_auth_provider = new firebase.auth.FacebookAuthProvider()
