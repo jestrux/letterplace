@@ -78,7 +78,7 @@ class App extends Component {
 
   handleLogin = (user) => {
     console.log("Login complete, fetching games for: ", user);
-    
+
     this.setState({ user }, () => {
       this.fetchUserGames();
       this.unsubscribeAuthListener();
@@ -105,7 +105,7 @@ class App extends Component {
     game.next = turn;
     game.began = true;
 
-    let games = this.games;
+    let games = this.state.games;
     games[this.state.cur_game] = game;
 
     this.setState({ games });
