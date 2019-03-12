@@ -28,9 +28,5 @@ export const db = firestore;
 export const auth = app.auth()
 export const messaging = app.messaging();
 
-messaging.onMessage(function(payload) {
-  console.log('FCM Message received. ', payload);
-});
-
 export const google_auth_provider = new firebase.auth.GoogleAuthProvider()
 export const fb_auth_provider = new firebase.auth.FacebookAuthProvider()
