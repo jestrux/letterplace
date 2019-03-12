@@ -4,9 +4,10 @@ import './GameDetail.css';
 import GameToolbar from '../GameToolbar';
 import GameTile from './GameTile';
 import { getTilesImage } from '../LetterPlaceHelpers';
+import { db } from '../data/firebase';
 
 class GameDetail extends React.Component {
-    state = { game: {}, playedTiles: [], playedWord: '' }
+    state = { game: {}, savingGame: false, playedTiles: [], playedWord: '' }
 
     componentWillReceiveProps(newProps){
         if(!newProps.game)
@@ -81,10 +82,12 @@ class GameDetail extends React.Component {
         this.setState({playedWord: this.state.playedTiles.map( t => t.letter ).join('')});
     }
     
-    clearPlayedTiles = () => {
+    clearPlayedTiles = (justTiles = false) => {
         this.setState({playedTiles: []}, () => {
             this.setWord();
-            this.setScore();
+
+            if(!justTiles)
+                this.setScore();
         });
     }
 
@@ -167,13 +170,35 @@ class GameDetail extends React.Component {
 
                 return tile;
             });
+
+            const turns = [game.turn, game.next];
+            game.next = turns[0];
+            game.turn = turns[1];
             game.summary_image = getTilesImage(game.tiles, game.colors);
-            this.props.onGameChanged(game);
+            game.updated_at = new Date().getTime();
+            this.persistGame(game);
         }
+    }
+
+    persistGame(game){
+        this.setState({savingGame: true});
+        const gameRef = db.doc('games/' + game.id);
+        gameRef.set(game)
+            .then(() => {
+                console.log("Game saved!");
+                this.clearPlayedTiles();
+                this.setState({savingGame: false}, () => {
+                    this.props.onGameChanged(game);
+                });
+            })
+            .catch(() => {
+                this.clearPlayedTiles();
+                window.alert("Failed to save game");
+            });
     }
     
     render() { 
-        const { game } = this.state;
+        const { game, savingGame } = this.state;
         const { tiles, words } = game;
         const { playedTiles, playedWord } = this.state;
         const playing = playedTiles.length > 0;
@@ -199,7 +224,8 @@ class GameDetail extends React.Component {
         return ( 
             <React.Fragment>
                 <div id="GameDetail">
-                    <GameToolbar>{ header }</GameToolbar>
+                    { !savingGame && <GameToolbar>{ header }</GameToolbar> }
+
                     <div id="gamePlayers" className={ !playing ? 'visible' : '' }>
                         <div className={ 'game-player ' + ((game.turn === 0) ? 'current' : '') } 
                              style={{ color: game.colors[0] }}>
@@ -238,6 +264,14 @@ class GameDetail extends React.Component {
                             })
                         }
                     </div>
+
+                    { savingGame &&  
+                        <div id="savingGameLoader">
+                            <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
+
+                            Saving Game...
+                        </div>
+                    }
                 </div>
             </React.Fragment>
         );

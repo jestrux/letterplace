@@ -124,6 +124,32 @@
     background: #da1d1d !important;
 }
 
+#savingGameLoader{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 40px;
+}
+
+#savingGameLoader svg{
+    width: 80px;
+    height: 80px;
+    margin-bottom: 30px;
+}
+
+#savingGameLoader svg circle{
+    stroke-width: 2.5px;
+}
+
 @media all and (min-width: 800px){
     #GameDetail{
         height: 100%;
