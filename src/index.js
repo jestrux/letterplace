@@ -15,6 +15,7 @@ serviceWorker.register();
 
 
 if ('serviceWorker' in navigator) {
+    console.log("Service worker ipo, fanya vituz!!!")
     navigator.serviceWorker.register('../firebase-messaging-sw.js')
     .then(function(registration) {
       console.log('FCM service worker successful, scope is:', registration.scope);
