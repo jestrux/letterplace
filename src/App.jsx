@@ -37,7 +37,7 @@ class App extends Component {
 
   fetchUserGames = () => {
     const userId = this.state.user.id;
-    this.setState({ fetchingGames: true, user: {...this.state.user, games: [] } });
+    this.setState({ fetchingGames: true, games: [] });
 
     const gamesRef = db.collection("games");
     const createdGames = gamesRef
@@ -131,6 +131,7 @@ class App extends Component {
                 loading={fetchingGames}
                 onStartGame={ this.handleStartGame }
                 onViewGame={(idx, image) => this.handleViewGame(idx, image) }
+                onRefreshGames={ this.fetchUserGames }
                 onLogout={this.handleLogout} />
               
               { (cur_page === 'game-detail' || window.innerWidth > 800) && games.length > 0 && 

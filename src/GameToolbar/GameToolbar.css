@@ -27,6 +27,7 @@
     padding: 10px 20px;
     color: #fff;
     background-color: var(--theme-color-green);
+    outline: none;
 }
 
 #listHeader .action-button{
