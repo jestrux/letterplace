@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/messaging';
 
 // Initalize and export Firebase.
 const config = {
@@ -22,7 +23,9 @@ firestore.settings({
 
 // firestore.enablePersistence();
 
+export const base = app;
 export const db = firestore;
 export const auth = app.auth()
+export const messaging = app.messaging()
 export const google_auth_provider = new firebase.auth.GoogleAuthProvider()
 export const fb_auth_provider = new firebase.auth.FacebookAuthProvider()

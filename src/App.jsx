@@ -12,8 +12,12 @@ import GameDetail from './GameDetail';
 // import { db_games } from './data/games';
 // import { auth_user, db_users } from './data/users';
 import { auth_user, db_users } from './data/users';
-import { db, auth } from './data/firebase';
+import { base, db, auth, messaging } from './data/firebase';
 import { compareValues } from './LetterPlaceHelpers';
+
+messaging.onMessage((message) => {
+  console.log("Message received from FCM", message);
+})
 
 export const AuthUser = React.createContext(null);
 
@@ -66,6 +70,13 @@ class App extends Component {
     this.setState({ user }, () => {
       this.fetchUserGames();
       this.unsubscribeAuthListener();
+
+      const fcmToken = user.fcm_token;
+      if(fcmToken && fcmToken.length){
+        setTimeout(() => {
+          this.sendWelcomeMessage(fcmToken);
+        }, 300);
+      }
     });
   }
   
@@ -101,6 +112,24 @@ class App extends Component {
       cur_game: 0,
       cur_page: 'game-detail'
     });
+  }
+
+  sendWelcomeMessage(token){
+    console.log(token);
+    // var message = {
+    //   data: {
+    //     score: '850',
+    //     time: '2:45'
+    //   },
+    //   token
+    // };
+
+    // messaging.send(message).then((response) => {
+    //   console.log('Successfully sent welcome notification:', response);
+    // })
+    // .catch((error) => {
+    //   console.log('Error sending welcome notification:', error);
+    // });
   }
 
   render() {

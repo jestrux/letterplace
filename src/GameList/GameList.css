@@ -29,3 +29,45 @@
         margin: 0;
     }
 }
+
+.notification-alert{
+    background: #f3ffe6;
+    color: #6a7c55;
+}
+
+.notification-alert > div{
+    display: flex;
+    align-items: flex-start;
+}
+
+.notification-alert svg{
+    width: 70px;
+    height: 70px;
+    margin: 1em;
+    margin-top: 0.25em;
+    margin-bottom: 0;
+    fill: #8ac34a
+}
+
+.notification-alert p{
+    /* margin-top: 0.3em; */
+    margin-right: 1em;
+    margin-bottom: 0.7em;
+    line-height: 1.4em;
+    font-size: 1.1em;
+    letter-spacing: 0.04em;
+}
+
+.notification-alert button{
+    background: #c9e0b18c;
+    letter-spacing: 0.05em;
+    font-size: 14px;
+    padding: 8px 16px;
+    text-transform: uppercase;
+    color: #4d6b2d;
+    border: 1px solid #c4e0a500;
+    outline: none;
+    margin-left: 80px;
+    margin-right: 1em;
+    margin-bottom: 1em;
+}

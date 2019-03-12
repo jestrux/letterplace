@@ -12,3 +12,13 @@ ReactDOM.render(<App />, document.getElementById('root'));
 // serviceWorker.unregister();
 
 serviceWorker.register();
+
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../firebase-messaging-sw.js')
+    .then(function(registration) {
+      console.log('FCM service worker successful, scope is:', registration.scope);
+    }).catch(function(err) {
+      console.log('FCM service worker registration failed, error:', err);
+    });
+}
