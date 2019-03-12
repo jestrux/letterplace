@@ -174,6 +174,7 @@ class GameDetail extends React.Component {
             const turns = [game.turn, game.next];
             game.next = turns[0];
             game.turn = turns[1];
+            game.began = true;
             game.summary_image = getTilesImage(game.tiles, game.colors);
             game.updated_at = new Date().getTime();
             this.persistGame(game);

@@ -83,12 +83,6 @@ class App extends Component {
   }
   
   handleGameChanged = (game) => {
-    const next = game.next; 
-    const turn = game.turn; 
-    game.turn = next;
-    game.next = turn;
-    game.began = true;
-
     let games = this.state.games;
     games[this.state.cur_game] = game;
 
