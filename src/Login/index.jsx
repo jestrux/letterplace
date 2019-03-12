@@ -39,9 +39,14 @@ const Login = ( props ) => {
 
     function onLoggedin(user){
         const userRef = db.doc("users/" + user.uid);
-        userRef.get().then(function(doc) {
+        userRef.get().then(async (doc) => {
             if (doc.exists){
                 console.log("User found in DB");
+                const dbUser = doc.data();
+                if(dbUser.dp !== user.photoURL){
+                    dbUser.dp = user.photoURL;
+                    await userRef.set(dbUser);
+                }
                 props.onLogin(doc.data());
             }
             else {
