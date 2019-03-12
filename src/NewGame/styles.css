@@ -1,0 +1,186 @@
+.newGameWrapper,
+.newGame{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.newGameWrapper{
+    background: rgba(0, 0, 0, 0.4);
+    position: relative;
+}
+
+.newGame{
+    padding-top: 60px;
+    background: #fff;
+    height: calc(100*var(--vh));
+    width: 100vw;
+    z-index: 9999;
+}
+
+.newGameContent{
+    width: 100%;
+}
+
+.new-game-item{
+    height: 55px;
+    padding: 1em;
+    padding-bottom: 0.6em;
+    border-bottom: 1px solid #eee;
+}
+
+.new-game-item:first-of-type{
+    margin-top: 1em;
+    padding-bottom: 0;
+}
+
+.new-game-item label{
+    color: #606060;
+}
+
+.new-game-item:not(.point-picker) label{
+    display: block;
+    transform: translateY(-10px);
+}
+
+.theme-item{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.theme-item div div{
+    display: flex;
+    align-items: center;
+}
+
+.theme-item span{
+    display: block;
+    width: 30px;
+    height: 30px;
+}
+
+.point-picker div{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.point-picker button{
+    outline: none;
+    background: transparent;
+    border: 1px solid #ddd;
+    padding: 0.5em 1em;
+}
+
+.point-picker button.selected{
+    background: #eaeaea;
+}
+
+#startButton{
+    position: relative;
+    font-size: 1.1em;
+    min-width: 230px;
+    display: block;
+    position: relative;
+    margin: 2em auto;
+    padding: 0.5em 1em;
+    height: 41px;
+    overflow: hidden;
+    border-radius: 1em;
+    background: transparent;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+#startButton.disabled,
+#startButton.loading{
+    background: #eee;
+    color: #aaa;
+    pointer-events: none;
+}
+
+#startButton.loading span{
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+#startButton svg{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 30px;
+    height: 30px;
+    stroke: #777;
+}
+
+#startButton svg circle{
+    stroke: #777
+}
+
+.opponents-loader{
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9em;
+}
+
+.opponents-loader svg{
+    margin-bottom: 1.3em;
+    width: 50px;
+    height: 50px;
+}
+
+.opponents-loader svg circle{
+    stroke-width: 2px;
+}
+
+.opponent-choice{
+    position: relative;
+    padding: 0.6em 0.75em;
+    display: flex;
+    align-items: center;
+    font-size: 1.3em;
+    width: 100%;
+    background: transparent;
+    border: none;
+}
+
+.opponent-choice.small{
+    padding: 0;
+}
+
+.opponent-choice:not(.small):first-of-type{
+    margin-top: 0.5em;
+}
+
+.opponent-choice:not(:last-child):after{
+    position: absolute;
+    content: '';
+    left: 75px;
+    right: 10px;
+    height: 1px;
+    bottom: 0;
+    background: #eee;
+}
+
+.opponent-choice img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 1em;
+    background: #ddd;
+}
+
+.opponent-choice.small img{
+    width: 28px;
+    height: 28px;
+    margin-right: 0.5em;
+}

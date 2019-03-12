@@ -28,6 +28,26 @@
     color: #fff;
     background-color: var(--theme-color-green);
 }
+
+#listHeader .action-button{
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    margin-right: 0.7em;
+}
+
+#listHeader .action-button svg{
+    width: 25px;
+    height: 25px;
+    fill: #555;
+}
+
 #listHeader #theDp{
     height: 40px; width: 40px;
     border-radius: 50%; 

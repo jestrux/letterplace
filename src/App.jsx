@@ -15,6 +15,8 @@ import { auth_user, db_users } from './data/users';
 import { db, auth } from './data/firebase';
 import { compareValues } from './LetterPlaceHelpers';
 
+export const AuthUser = React.createContext(null);
+
 class App extends Component {
   state = {  
     user: null, 
@@ -34,9 +36,6 @@ class App extends Component {
   }
 
   fetchUserGames = () => {
-    // var getOptions = {
-    //   source: 'cache'
-    // };
     const userId = this.state.user.id;
     this.setState({ fetchingGames: true, user: {...this.state.user, games: [] } });
 
@@ -56,19 +55,6 @@ class App extends Component {
         invitedGamesSnapshot.forEach(doc => games.push(doc.data()));
 
         games.sort(compareValues('updated_at', 'desc'));
-
-
-        // createdGamesSnapshot.forEach(doc => {
-        //   const game = doc.data();
-        //   console.log("Game: ", game);
-        //   const newGame = {
-        //     ...game,
-        //     updated_at: game.updated_at.seconds
-        //   }
-        //   const gamesRef = db.doc("games/" + game.id);
-        //   gamesRef.set(newGame).then(() => console.log("Game saved: "));
-        // });
-
         this.setState({ fetchingGames: false, games });
       })
       .catch(function(error) {
@@ -77,8 +63,6 @@ class App extends Component {
   }
 
   handleLogin = (user) => {
-    console.log("Login complete, fetching games for: ", user);
-
     this.setState({ user }, () => {
       this.fetchUserGames();
       this.unsubscribeAuthListener();
@@ -116,37 +100,49 @@ class App extends Component {
     this.setState( { cur_page: 'game-detail', cur_game: idx } );
   }
 
+  handleStartGame = (game) => {
+    // console.log("Starting new game: ", game);
+    this.setState({ 
+      games: [ game, ...this.state.games ], 
+      cur_game: 0,
+      cur_page: 'game-detail'
+    });
+  }
+
   render() {
     const { sessionUserFetched, sessionUser, user, games, fetchingGames, cur_page, cur_game, tiles_played } = this.state;
 
     return (
-      <React.Fragment>
-        { !sessionUserFetched && 
-          <div className="loader"> 
-            <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
-          </div>
-        }
-        { sessionUserFetched && user === null && <Login sessionUser={sessionUser} onLogin={this.handleLogin} /> }
+      <AuthUser.Provider value={this.state.user}>
+        <React.Fragment>
+          { !sessionUserFetched && 
+            <div className="loader"> 
+              <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
+            </div>
+          }
+          { sessionUserFetched && user === null && <Login sessionUser={sessionUser} onLogin={this.handleLogin} /> }
 
-        { user !== null && 
-          <div className="App">          
-            <GameList 
-              user={user} 
-              currentGame={cur_game}
-              games={games} 
-              loading={fetchingGames}
-              onViewGame={(idx, image) => this.handleViewGame(idx, image) }
-              onLogout={this.handleLogout} />
-            
-            { (cur_page === 'game-detail' || window.innerWidth > 800) && 
-              <GameDetail
+          { user !== null && 
+            <div className="App">          
+              <GameList 
                 user={user} 
-                game={games[cur_game]}
-                onGoHome={ this.handleGoHome }
-                onGameChanged={ this.handleGameChanged } />}
-          </div>
-        }
-      </React.Fragment>
+                currentGame={cur_game}
+                games={games} 
+                loading={fetchingGames}
+                onStartGame={ this.handleStartGame }
+                onViewGame={(idx, image) => this.handleViewGame(idx, image) }
+                onLogout={this.handleLogout} />
+              
+              { (cur_page === 'game-detail' || window.innerWidth > 800) && games.length > 0 && 
+                <GameDetail
+                  user={user} 
+                  game={games[cur_game]}
+                  onGoHome={ this.handleGoHome }
+                  onGameChanged={ this.handleGameChanged } />}
+            </div>
+          }
+        </React.Fragment>
+      </AuthUser.Provider>
     );
   }
 }
