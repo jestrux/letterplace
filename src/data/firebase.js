@@ -30,3 +30,20 @@ export const messaging = app.messaging();
 
 export const google_auth_provider = new firebase.auth.GoogleAuthProvider()
 export const fb_auth_provider = new firebase.auth.FacebookAuthProvider()
+
+
+// NOTIFICATION SAMPLE
+// {
+//   "message": {
+//     "notification": {
+//       "title": "FCM Message",
+//       "body": "This is a message from FCM"
+//     }
+//   },
+//   "webpush": {
+//       "fcm_options": {
+//         "link": "http://letterplace.herokuapp.com"
+//       }
+//   },
+//   "to": "fTd3hqzfdXk:APA91bEg7hWRmDJdTmVyn4-eJxhfCafOJhJUQAVEcjq8oXk2OwZ8VACD_Xhbc9ox_yit0haJWaDzKcYeghtqK6EkbPGfmNFkTZRtXmNBG7wqe88WWQloK2xrSHftPREsGZpTnWd1O2lr"
+// }
