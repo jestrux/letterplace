@@ -1,4 +1,6 @@
 import React from 'react';
+import _findIndex from 'lodash/findIndex';
+import _find from 'lodash/find';
 import './GameDetail.css';
 
 import GameToolbar from '../GameToolbar';
@@ -6,9 +8,10 @@ import GameTile from './GameTile';
 import { getTilesImage } from '../LetterPlaceHelpers';
 import { db } from '../data/firebase';
 import { sendTurnNotification } from '../data/methods';
+import Toast from '../Toast';
 
 class GameDetail extends React.Component {
-    state = { game: {}, savingGame: false, playedTiles: [], playedWord: '' }
+    state = { showLastPlayedTiles: false, game: {}, savingGame: false, playedTiles: [], playedWord: '' }
 
     componentWillReceiveProps(newProps){
         if(!newProps.game)
@@ -19,6 +22,8 @@ class GameDetail extends React.Component {
             this.setState({game, playedTiles: []}, () => {
                 this.setWord();
                 this.setScore();
+
+                this.showLastPlayedIfTurn(game);
             });
         }
     }
@@ -29,6 +34,45 @@ class GameDetail extends React.Component {
             this.setState({game, playedTiles: []}, () => {
                 this.setWord();
                 this.setScore();
+                this.showLastPlayedIfTurn(game);
+            });
+        }
+    }
+
+    showLastPlayedIfTurn(game){
+        const curUserIdx = _findIndex(game.players, ['id', this.props.user.id]);
+        const isCurUserTurn = game.turn === curUserIdx;
+        console.log("Game changed: ", isCurUserTurn);
+
+        if(isCurUserTurn){
+            setTimeout(() => {
+                this.showTurnMessage();
+            }, 100);
+        }
+    }
+
+    playerFaceClicked(index){
+        const game = this.props.game;
+
+        if(index === game.next){
+            this.showTurnMessage();
+        }
+    }
+
+    showTurnMessage(){
+        if(this.state.showLastPlayedTiles){
+            this.setState({showLastPlayedTiles: false}, () => {
+                this.setState({showLastPlayedTiles: true}, () => {
+                    setTimeout(() => {
+                        this.setState({showLastPlayedTiles: false});
+                    }, 1000);
+                });
+            });
+        }else{
+            this.setState({showLastPlayedTiles: true}, () => {
+                setTimeout(() => {
+                    this.setState({showLastPlayedTiles: false});
+                }, 1000);
             });
         }
     }
@@ -66,7 +110,7 @@ class GameDetail extends React.Component {
             return;
         }
 
-        const curUserIdx = gamePlayers.findIndex(p => p.id === user.id);
+        const curUserIdx = _findIndex(gamePlayers, ['id', user.id]);
         const otherUserIdx = curUserIdx === 0 ? 1 : 0;
         const otherUserTiles = this.state.playedTiles.filter(p => p.owner === otherUserIdx && !p.locked);
         const newTiles = this.state.playedTiles.filter(p => p.owner === -1);
@@ -127,14 +171,14 @@ class GameDetail extends React.Component {
         let {game, playedTiles, playedWord} = this.state;
         game = JSON.parse(JSON.stringify(game));
         const { players, words } = game;
-        const curUserIdx = players.findIndex(p => p.id === this.props.user.id);
+        const curUserIdx = _findIndex(players, ['id', this.props.user.id]);
         const notTurn = game.turn !== curUserIdx;
 
         if(notTurn){
             return alert("Please wait your turn!!!");
         }
 
-        let parentWord = words && words.length ? words.find(w => w.word.indexOf(playedWord) !== -1) : null;
+        let parentWord = words && words.length ? _find(words, w => w.word.indexOf(playedWord) !== -1) : null;
         if(parentWord){
             parentWord = parentWord.word;
             if(parentWord.length === playedWord.length)
@@ -212,13 +256,17 @@ class GameDetail extends React.Component {
     }
     
     render() { 
-        const { game, savingGame } = this.state;
+        const { showLastPlayedTiles, game, savingGame } = this.state;
         const { tiles, words } = game;
         const { playedTiles, playedWord } = this.state;
         const playing = playedTiles.length > 0;
         const played_indexes = playedTiles.map( t => t.original_index );
         const invalidWord = !playedWord.length || window.letterpressDictionary.indexOf(playedWord.toLowerCase()) === -1;
         const subWordAlreadyPlayed = playedWord.length && words && words.length && words.filter(w => w.word.indexOf(playedWord) !== -1).length > 0;
+
+        const curUserIdx = _findIndex(game.players, ['id', this.props.user.id]);
+        let turnMessage = game.next === curUserIdx ? "You" : game.players[game.next].name;
+        turnMessage += " played <strong>"+game.lastword+"</strong>";
 
         const header = (
             <div id="detailHeader">
@@ -237,20 +285,26 @@ class GameDetail extends React.Component {
 
         return ( 
             <React.Fragment>
-                <div id="GameDetail">
+                <div id="GameDetail" className={showLastPlayedTiles ? 'show-last-played' : ''}>
                     { !savingGame && <GameToolbar>{ header }</GameToolbar> }
 
                     <div id="gamePlayers" className={ !playing ? 'visible' : '' }>
-                        <div className={ 'game-player ' + ((game.turn === 0) ? 'current' : '') } 
+                        <div onClick={() => this.playerFaceClicked(0)} className={ 'game-player ' + ((game.turn === 0) ? 'current' : '') } 
                              style={{ color: game.colors[0] }}>
                             <img src={game.players[0].dp} alt=""/>
                             <span>{ game.players[0].points }</span>
                         </div>
-                        <div className={ 'game-player ' + ((game.turn === 1) ? 'current' : '') } 
+                        <div onClick={() => this.playerFaceClicked(1)} className={ 'game-player ' + ((game.turn === 1) ? 'current' : '') } 
                              style={{ color: game.colors[1] }}>
                             <img src={game.players[1].dp} alt=""/>
                             <span>{ game.players[1].points }</span>
                         </div>
+
+                        { showLastPlayedTiles &&
+                            <Toast style={{ top: '4em', left: '50%', transform: 'translateX(-50%)' }}>
+                                <div dangerouslySetInnerHTML={{__html: turnMessage}}></div>
+                            </Toast>
+                        }
                     </div>
                     <div id="playedTiles" className={ playing ? 'visible' : '' }>
                         { playedTiles.map( (tile, index) => (

@@ -42,7 +42,8 @@ export const sendTurnNotification = async function(player, otherPlayerId, game){
                     "lastword": game.lastword,
                     "updated_at" : game.updated_at,
                     "summary_image" : game.summary_image
-                }
+                },
+                "newWord" : game.words[game.words.length - 1]
             },
             "to": otherPlayerToken
         }

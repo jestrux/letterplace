@@ -49,6 +49,7 @@ class App extends Component {
 
         if(changedGameIdx !== -1){
           let changedGame = {...games[changedGameIdx], ...game};
+          changedGame.words.push(message.data.newWord);
           games.splice(changedGameIdx, 1, changedGame);
           games.sort(compareValues('updated_at', 'desc'));
           this.setState({ games });

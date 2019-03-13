@@ -29,8 +29,11 @@ const GameTile = ( props ) => {
         pointerEvents: hidden ? 'none' : '',
     }
 
+    let tileClassNames = 'GameTile';
+    tileClassNames += tile.lastplayed ? ' last-played' : '';
+
     return (
-        <div onClick={ props.onClicked } className="GameTile" style={ tileStyles }>
+        <div onClick={ props.onClicked } className={tileClassNames} style={ tileStyles }>
             { tile.letter }
         </div>
     );

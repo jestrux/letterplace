@@ -150,6 +150,26 @@
     stroke-width: 2.5px;
 }
 
+#GameDetail.show-last-played .GameTile.last-played{
+    animation: wobble 1s;
+    z-index: 1;
+}
+
+@keyframes wobble{
+    from{
+        transform: scale(1.1) rotate(-5deg);
+    }
+    33.333%{
+        transform: scale(1) rotate(5deg);
+    }
+    66.666%{
+        transform: scale(1.1) rotate(-5deg);
+    }
+    to{
+        transform: scale(1) rotate(0);
+    }
+}
+
 @media all and (min-width: 800px){
     #GameDetail{
         height: 100%;
