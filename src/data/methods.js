@@ -47,17 +47,18 @@ export const sendTurnNotification = async function(player, otherPlayerId, game){
             },
             "data": {
                 "action": "game-changed",
-                "game": {
-                    "id": game.id,
-                    "tiles": game.tiles,
-                    "turn": game.turn,
-                    "next": game.next,
-                    "players": game.players,
-                    "lastword": game.lastword,
-                    "updated_at" : game.updated_at,
-                    "summary_image" : game.summary_image
-                },
-                "newWord" : game.words[game.words.length - 1]
+                "gameId": game.id,
+                // "game": {
+                //     "id": game.id,
+                //     "tiles": game.tiles,
+                //     "turn": game.turn,
+                //     "next": game.next,
+                //     "players": game.players,
+                //     "lastword": game.lastword,
+                //     "updated_at" : game.updated_at,
+                //     // "summary_image" : game.summary_image
+                // },
+                // "newWord" : game.words[game.words.length - 1]
             },
             "to": otherPlayerToken
         }

@@ -14,7 +14,7 @@ const GameList = ( props ) => {
     const authUser = useContext(AuthUser);
     const { games, user, loading, newGameIndex } = props;
     const [ startingGame, setStartingGame ] = useState(false);
-    const [ notificationsAllowed, setNotificationsAllowed ] = useState(Notification.permission === 'granted');
+    const [ notificationsAllowed, setNotificationsAllowed ] = useState(Notification.permission === 'granted' && authUser.fcm_token);
 
     function handleGameClicked(index){
         const list = document.querySelector('#GameList')

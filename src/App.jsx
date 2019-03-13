@@ -41,20 +41,37 @@ class App extends Component {
       console.log("Message received from FCM", message);
       const hasData = message.data && message.data.action;
       if(hasData && message.data.action === "game-changed"){
-        // console.log("Game changed")
-        const game = JSON.parse(message.data.game);
-        const games = this.state.games;
-        const changedGameIdx = _findIndex(games, ['id', game.id]);
+        const gameId = message.data.gameId;
+        try {
+          const games = this.state.games;
+          const game = await getGameById(gameId);
+          const changedGameIdx = _findIndex(games, ['id', game.id]);
 
-        if(changedGameIdx !== -1){
-          let changedGame = {...games[changedGameIdx], ...game};
-          changedGame.words.push(message.data.newWord);
-          games.splice(changedGameIdx, 1, changedGame);
-          games.sort(compareValues('updated_at', 'desc'));
-          this.setState({ games });
-        }else{
-          console.log("No game with that id mate!!");
+          if(changedGameIdx !== -1){
+            games.splice(changedGameIdx, 1, game);
+            games.sort(compareValues('updated_at', 'desc'));
+            this.setState({ games });
+          }else{
+            console.log("No game with that id mate!!");
+          }
+        } catch (error) {
+          console.log("Failed to fetch game", error);
         }
+
+        // console.log("Game changed")
+        // const game = JSON.parse(message.data.game);
+        // const games = this.state.games;
+        // const changedGameIdx = _findIndex(games, ['id', game.id]);
+
+        // if(changedGameIdx !== -1){
+        //   let changedGame = {...games[changedGameIdx], ...game};
+        //   changedGame.words.push(message.data.newWord);
+        //   games.splice(changedGameIdx, 1, changedGame);
+        //   games.sort(compareValues('updated_at', 'desc'));
+        //   this.setState({ games });
+        // }else{
+        //   console.log("No game with that id mate!!");
+        // }
       }
 
       if(hasData && message.data.action === "new-game"){
