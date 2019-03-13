@@ -42,8 +42,9 @@ const Login = ( props ) => {
         userRef.get().then(async (doc) => {
             if (doc.exists){
                 const dbUser = doc.data();
-                if(dbUser.dp !== user.photoURL){
-                    dbUser.dp = user.photoURL;
+                if(dbUser.dp !== user.providerData[0].photoURL){
+                    dbUser.dp = user.providerData[0].photoURL;
+                    console.log("Updating photo URL...");
                     await userRef.set(dbUser);
                 }
                 props.onLogin(dbUser);
@@ -67,7 +68,7 @@ const Login = ( props ) => {
             name,
             username: name.substring(0, 1).toUpperCase() + name.substring(1),
             provider: user.providerData[0].providerId,
-            dp: user.photoURL
+            dp: user.providerData[0].photoURL
         }
 
         const userRef = db.doc("users/" + user.uid);
