@@ -5,6 +5,7 @@ import GameToolbar from '../GameToolbar';
 import GameTile from './GameTile';
 import { getTilesImage } from '../LetterPlaceHelpers';
 import { db } from '../data/firebase';
+import { sendTurnNotification } from '../data/methods';
 
 class GameDetail extends React.Component {
     state = { game: {}, savingGame: false, playedTiles: [], playedWord: '' }
@@ -185,8 +186,9 @@ class GameDetail extends React.Component {
         this.setState({savingGame: true});
         const gameRef = db.doc('games/' + game.id);
         gameRef.set(game)
-            .then(() => {
+            .then(async () => {
                 console.log("Game saved!");
+                await this.notifyToOtherPlayer(game);
                 this.clearPlayedTiles();
                 this.setState({savingGame: false}, () => {
                     this.props.onGameChanged(game);
@@ -196,6 +198,17 @@ class GameDetail extends React.Component {
                 this.clearPlayedTiles();
                 window.alert("Failed to save game");
             });
+    }
+
+    notifyToOtherPlayer = async (game) => {
+        const user = this.props.user;
+        let player = user.name;
+        player = player.charAt(0).toUpperCase() + player.substr(1);
+        // const otherPlayerId = user.id;
+        const otherPlayerId = game.player1 === user.id ? game.player2 : game.player1;
+        const notificationResult = await sendTurnNotification(player, otherPlayerId, game);
+        console.log("Notification sent: ", notificationResult);
+        return notificationResult;
     }
     
     render() { 

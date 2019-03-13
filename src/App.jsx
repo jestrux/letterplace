@@ -3,21 +3,16 @@
 // Animations: https://www.youtube.com/watch?v=a_Ew0FDSLzs
 
 import React, { Component } from 'react';
+import _findIndex from 'lodash/findIndex';
 import './App.css';
 
 import Login from './Login';
 import GameList from './GameList';
 import GameDetail from './GameDetail';
 
-// import { db_games } from './data/games';
 // import { auth_user, db_users } from './data/users';
-import { auth_user, db_users } from './data/users';
-import { base, db, auth, messaging } from './data/firebase';
+import { db, auth, messaging } from './data/firebase';
 import { compareValues } from './LetterPlaceHelpers';
-
-messaging.onMessage((message) => {
-  console.log("Message received from FCM", message);
-})
 
 export const AuthUser = React.createContext(null);
 
@@ -37,6 +32,31 @@ class App extends Component {
     this.unsubscribeAuthListener = auth.onAuthStateChanged((sessionUser) => {
       this.setState({sessionUserFetched: true, sessionUser});
     });
+  }
+
+  componentDidMount(){
+    messaging.onMessage((message) => {
+      console.log("Message received from FCM", message);
+      const hasData = message.data && message.data.action;
+      if(hasData && message.data.action === "game-changed"){
+        const game = JSON.parse(message.data.game);
+
+        // console.log("\n\n");
+        // console.log(...game)
+
+        const games = this.state.games;
+        const changedGameIdx = _findIndex(games, ['id', game.id]);
+
+        if(changedGameIdx !== -1){
+          let changedGame = {...games[changedGameIdx], ...game};
+          games.splice(changedGameIdx, 1, changedGame);
+          games.sort(compareValues('updated_at', 'desc'));
+          this.setState({ games });
+        }else{
+          console.log("No game with that id mate!!");
+        }
+      }
+    })
   }
 
   fetchUserGames = () => {
@@ -100,7 +120,7 @@ class App extends Component {
     this.setState({ games });
   }
   
-  handleViewGame = ( idx, image ) => {
+  handleViewGame = async ( idx, image ) => {
     console.log(image);
     this.setState( { cur_page: 'game-detail', cur_game: idx } );
   }
@@ -115,7 +135,7 @@ class App extends Component {
   }
 
   sendWelcomeMessage(token){
-    console.log(token);
+    // console.log(token);
     // var message = {
     //   data: {
     //     score: '850',
