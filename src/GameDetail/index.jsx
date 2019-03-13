@@ -7,7 +7,7 @@ import GameToolbar from '../GameToolbar';
 import GameTile from './GameTile';
 import { getTilesImage } from '../LetterPlaceHelpers';
 import { db } from '../data/firebase';
-import { sendTurnNotification } from '../data/methods';
+import { sendTurnNotification, sendNewGameNotification } from '../data/methods';
 import Toast from '../Toast';
 
 class GameDetail extends React.Component {
@@ -232,7 +232,7 @@ class GameDetail extends React.Component {
         gameRef.set(game)
             .then(async () => {
                 console.log("Game saved!");
-                await this.notifyToOtherPlayer(game);
+                await this.notifyOtherPlayer(game);
                 this.clearPlayedTiles();
                 this.setState({savingGame: false}, () => {
                     this.props.onGameChanged(game);
@@ -244,13 +244,19 @@ class GameDetail extends React.Component {
             });
     }
 
-    notifyToOtherPlayer = async (game) => {
+    notifyOtherPlayer = async (game) => {
         const user = this.props.user;
         let player = user.name;
         player = player.charAt(0).toUpperCase() + player.substr(1);
         // const otherPlayerId = user.id;
         const otherPlayerId = game.player1 === user.id ? game.player2 : game.player1;
-        const notificationResult = await sendTurnNotification(player, otherPlayerId, game);
+
+        let notificationResult;
+        if(game.words.length > 1)
+            notificationResult = await sendTurnNotification(player, otherPlayerId, game);
+        else
+            notificationResult = await sendNewGameNotification(player, otherPlayerId, game);
+
         console.log("Notification sent: ", notificationResult);
         return notificationResult;
     }

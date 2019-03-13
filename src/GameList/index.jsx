@@ -8,10 +8,11 @@ import GameListItem from './GameListItem';
 import NewGame from '../NewGame';
 import { messaging, db } from '../data/firebase';
 import { AuthUser } from '../App';
+import Toast from '../Toast';
 
 const GameList = ( props ) => { 
     const authUser = useContext(AuthUser);
-    const { games, user, loading } = props;
+    const { games, user, loading, newGameIndex } = props;
     const [ startingGame, setStartingGame ] = useState(false);
     const [ notificationsAllowed, setNotificationsAllowed ] = useState(Notification.permission === 'granted');
 
@@ -76,6 +77,10 @@ const GameList = ( props ) => {
 		</div>
     );
 
+    let newGameMessage = null;
+    if(games && games.length && newGameIndex !== -1)
+      newGameMessage = `New game received from <strong>${games[newGameIndex].players[0].name}</strong>`;
+
     return (
         <React.Fragment>
             <div id="GameList">
@@ -91,6 +96,12 @@ const GameList = ( props ) => {
                         </h3>
                     </div>
                 </div>
+
+                { newGameMessage &&
+                    <Toast style={{ top: '4em', left: '50%', transform: 'translateX(-50%)' }}>
+                        <div dangerouslySetInnerHTML={{__html: newGameMessage}}></div>
+                    </Toast>
+                }
 
                 { !notificationsAllowed &&
                     <div className="notification-alert">

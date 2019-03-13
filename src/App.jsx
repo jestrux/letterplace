@@ -13,6 +13,7 @@ import GameDetail from './GameDetail';
 // import { auth_user, db_users } from './data/users';
 import { db, auth, messaging } from './data/firebase';
 import { compareValues } from './LetterPlaceHelpers';
+import { getGameById } from './data/methods';
 
 export const AuthUser = React.createContext(null);
 
@@ -25,7 +26,8 @@ class App extends Component {
     cur_game: 0, 
     tiles_played:false,
     sessionUserFetched: false,
-    sessionUser: null
+    sessionUser: null,
+    newGameIndex: -1
   };
 
   componentWillMount(){
@@ -35,15 +37,12 @@ class App extends Component {
   }
 
   componentDidMount(){
-    messaging.onMessage((message) => {
+    messaging.onMessage(async (message) => {
       console.log("Message received from FCM", message);
       const hasData = message.data && message.data.action;
       if(hasData && message.data.action === "game-changed"){
+        // console.log("Game changed")
         const game = JSON.parse(message.data.game);
-
-        // console.log("\n\n");
-        // console.log(...game)
-
         const games = this.state.games;
         const changedGameIdx = _findIndex(games, ['id', game.id]);
 
@@ -55,6 +54,25 @@ class App extends Component {
           this.setState({ games });
         }else{
           console.log("No game with that id mate!!");
+        }
+      }
+
+      if(hasData && message.data.action === "new-game"){
+        const gameId = message.data.gameId;
+        try {
+          const games = this.state.games;
+          const newGame = await getGameById(gameId);
+          games.push(newGame);
+          games.sort(compareValues('updated_at', 'desc'));
+
+          const newGameIndex = _findIndex(games, ['id', gameId]);
+          this.setState({games, newGameIndex}, () => {
+            setTimeout(() => {
+              this.setState({newGameIndex: -1})
+            }, 1000);
+          });
+        } catch (error) {
+          console.log("Failed to fetch game", error);
         }
       }
     })
@@ -154,7 +172,7 @@ class App extends Component {
   }
 
   render() {
-    const { sessionUserFetched, sessionUser, user, games, fetchingGames, cur_page, cur_game, tiles_played } = this.state;
+    const { sessionUserFetched, sessionUser, user, games, fetchingGames, cur_page, cur_game, tiles_played, newGameIndex } = this.state;
     const loadingLocalUser = sessionUserFetched && sessionUser && !user;
     
     return (
@@ -165,6 +183,7 @@ class App extends Component {
               <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
             </div>
           }
+
           { sessionUserFetched && user === null && <Login sessionUser={sessionUser} onLogin={this.handleLogin} /> }
 
           { user !== null && 
@@ -174,10 +193,11 @@ class App extends Component {
                 currentGame={cur_game}
                 games={games} 
                 loading={fetchingGames}
+                newGameIndex={newGameIndex}
                 onStartGame={ this.handleStartGame }
                 onViewGame={(idx, image) => this.handleViewGame(idx, image) }
                 onRefreshGames={ this.fetchUserGames }
-                onLogout={this.handleLogout} />
+                onLogout={this.handleLogout}/>
               
               { (cur_page === 'game-detail' || window.innerWidth > 800) && games.length > 0 && 
                 <GameDetail
