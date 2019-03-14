@@ -17,7 +17,7 @@ messaging.setBackgroundMessageHandler(function(payload) {
     var notificationTitle = payload.notification.title || 'Letterplace Notification';
     var notificationOptions = {
       body: payload.notification.body || "Click to go to app.",
-      icon: 'icon.png'
+      icon: 'https://raw.githubusercontent.com/jestrux/letterplace/master/public/icon.png'
     };
 
     self.addEventListener('notificationclick', function(){
