@@ -136,7 +136,11 @@ class App extends Component {
     });
   }
   
-  handleLogout = () => {
+  handleLogout = async () => {
+    if(this.state.user){
+      await db.doc("users/" + this.state.user.uid)
+        .set({ ...this.state.user, fcm_token: null })
+    }
     auth.signOut().then(() => {
       this.setState({user: null, sessionUser: null, games: []});
     }, (error) => {
