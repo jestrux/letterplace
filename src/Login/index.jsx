@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import firebase from 'firebase';
 import { db, auth, google_auth_provider, fb_auth_provider } from '../data/firebase'
 
 import './styles.css';
@@ -17,12 +17,14 @@ const Login = ( props ) => {
         }
     });
 
-    function loginWithProvider(provider){
+    async function loginWithProvider(provider){
         setAuthenticating(true);
         setProvider(provider);
 
         const auth_provider = provider === 'facebook' ? 
             fb_auth_provider : google_auth_provider;
+
+        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
         auth.signInWithRedirect(auth_provider)
             .then((result) => {
@@ -55,9 +57,7 @@ const Login = ( props ) => {
             }
         }).catch(function(error) {
             console.log("Error getting user document:", error)
-            setAuthenticating(false, () => {
-                // alert("Error getting document!")
-            });
+            setAuthenticating(false);
         });
     }
 
