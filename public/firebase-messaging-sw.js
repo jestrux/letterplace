@@ -17,8 +17,12 @@ messaging.setBackgroundMessageHandler(function(payload) {
     var notificationTitle = payload.notification.title || 'Letterplace Notification';
     var notificationOptions = {
       body: payload.notification.body || "Click to go to app.",
-      icon: '/icon.png'
+      icon: 'icon.png'
     };
+
+    self.addEventListener('notificationclick', function(){
+      clients.openWindow('http://letterplace.herokuapp.com');
+    })
   
     return self.registration.showNotification(notificationTitle, 
         notificationOptions);
