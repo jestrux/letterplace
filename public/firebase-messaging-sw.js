@@ -17,13 +17,15 @@ messaging.setBackgroundMessageHandler(function(payload) {
     var notificationTitle = payload.notification.title || 'Letterplace Notification';
     var notificationOptions = {
       body: payload.notification.body || "Click to go to app.",
-      icon: 'https://raw.githubusercontent.com/jestrux/letterplace/master/public/icon.png'
+      icon: 'https://letterplace.herokuapp.com/static/media/logo.f81f4c25.png'
     };
 
     self.addEventListener('notificationclick', function(){
       clients.openWindow('http://letterplace.herokuapp.com');
     })
   
-    return self.registration.showNotification(notificationTitle, 
-        notificationOptions);
+    return self.registration.showNotification(
+      notificationTitle, 
+      notificationOptions
+    );
 });
