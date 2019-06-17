@@ -24,7 +24,7 @@ const GameListItem = ( props ) => {
     }
 
     function _showTagline(word){
-        return (word && word.length) > 0 ? "" : "none";
+        return (word && word.length > 0) ? "" : "none";
     }
 
     return (
