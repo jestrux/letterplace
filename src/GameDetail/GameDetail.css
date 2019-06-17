@@ -157,16 +157,16 @@
 
 @keyframes wobble{
     from{
-        transform: scale(1.1) rotate(-5deg);
+        transform: rotate(-8deg);
     }
     33.333%{
-        transform: scale(1) rotate(5deg);
+        transform: rotate(8deg);
     }
     66.666%{
-        transform: scale(1.1) rotate(-5deg);
+        transform: rotate(-8deg);
     }
     to{
-        transform: scale(1) rotate(0);
+        transform: rotate(0);
     }
 }
 
