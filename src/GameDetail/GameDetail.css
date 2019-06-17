@@ -157,8 +157,6 @@
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
     outline: 1px solid transparent;
-    padding: 1px; -webkit-background-clip: content-box;
-    padding: 1px; background-clip: content-box;
 
     animation: wobble 1s;
     z-index: 1;
