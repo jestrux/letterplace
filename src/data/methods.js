@@ -1,6 +1,18 @@
 import { db } from './firebase';
 import axios from 'axios';
 
+const isLocalhost = Boolean(
+    window.location.hostname === 'localhost' ||
+    // [::1] is the IPv6 localhost address.
+    window.location.hostname === '[::1]' ||
+    // 127.0.0.1/8 is considered localhost for IPv4.
+    window.location.hostname.match(
+    /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+    )
+);
+
+const APP_URL = isLocalhost ? "http://localhost:3000" : "http://letterplace.herokuapp.com";
+
 export const getGameById = function(gameId){
 	return new Promise(async (resolve, reject) => {
 		db.doc("games/" + gameId).get().then(doc => {
@@ -40,10 +52,13 @@ const myToken = "fTd3hqzfdXk:APA91bEg7hWRmDJdTmVyn4-eJxhfCafOJhJUQAVEcjq8oXk2OwZ
 export const sendTurnNotification = async function(player, otherPlayerId, game){
     try {
         const otherPlayerToken = await getUserFCMToken(otherPlayerId);
+        const score = game.players[0].points + " - " + game.players[1].points;
         const notification = {
             "notification": {
                 "title": "Your Turn",
-                "body": `${player} played ${game.lastword}`
+                "body": `${player} played ${game.lastword}, new score: ${score}`,
+                "icon": game.summary_image,
+                "click_action": APP_URL
             },
             "data": {
                 "action": "game-changed",
@@ -83,7 +98,9 @@ export const sendNewGameNotification = async function(player, otherPlayerId, gam
         const notification = {
             "notification": {
                 "title": "New Game",
-                "body": `${player} played ${game.lastword}`
+                "body": `${player} played ${game.lastword}`,
+                "icon": game.summary_image,
+                "click_action": APP_URL
             },
             "data": {
                 "action": "new-game",
