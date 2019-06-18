@@ -52,7 +52,7 @@ const myToken = "fTd3hqzfdXk:APA91bEg7hWRmDJdTmVyn4-eJxhfCafOJhJUQAVEcjq8oXk2OwZ
 export const sendTurnNotification = async function(player, otherPlayerId, game){
     try {
         const otherPlayerToken = await getUserFCMToken(otherPlayerId);
-        const score = game.players[0].points + " - " + game.players[1].points;
+        const score = game.player1.points + " - " + game.player2.points;
         const notification = {
             "notification": {
                 "title": "Your Turn",

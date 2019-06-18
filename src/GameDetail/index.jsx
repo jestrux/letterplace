@@ -245,8 +245,7 @@ class GameDetail extends React.Component {
         const user = this.props.user;
         let player = user.name;
         player = player.charAt(0).toUpperCase() + player.substr(1);
-        // const otherPlayerId = user.id;
-        const otherPlayerId = game.player1 === user.id ? game.player2 : game.player1;
+        const otherPlayerId = game.players[0] === user.id ? game.player2.id : game.player1.id;
 
         let notificationResult;
         if(game.words.length > 1)
