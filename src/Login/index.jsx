@@ -44,11 +44,15 @@ const Login = ( props ) => {
         userRef.get().then(async (doc) => {
             if (doc.exists){
                 const dbUser = doc.data();
-                if(dbUser.dp !== user.providerData[0].photoURL){
-                    dbUser.dp = user.providerData[0].photoURL;
+                const { providerId, uid, photoURL } = user.providerData[0];
+                const facebookDp = "https://graph.facebook.com/" + uid + "/picture?height=500";
+                const authDp = providerId === "facebook.com" ? facebookDp : photoURL;
+                if(dbUser.dp !== authDp){
+                    dbUser.dp = authDp;
                     console.log("Updating photo URL...");
                     await userRef.set(dbUser);
                 }
+                updateDpInGames(user.uid, authDp);
                 props.onLogin(dbUser);
             }
             else {
@@ -59,6 +63,26 @@ const Login = ( props ) => {
             console.log("Error getting user document:", error)
             setAuthenticating(false);
         });
+    }
+
+    function updateDpInGames(userId, newDp){
+        const gamesRef = db.collection("games");
+        const userGames = gamesRef
+            .where("players", "array-contains", userId)
+            .get();
+
+        userGames.then(snapshot => {
+            let games = snapshot.docs.map(doc => doc.data());            
+            games.forEach(async (game) => {
+                const playerKey = game.players.indexOf(userId) === 0 ? "player1" : "player2";
+                if(game[playerKey].dp !== newDp){
+                    game[playerKey].dp = newDp;
+                    console.log("Updating game dp....");
+                    await db.doc("games/" + game.id).set(game);
+                    console.log("Game dp updated!");
+                }
+            });
+        })
     }
 
     function registerNewUser(user){
