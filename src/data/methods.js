@@ -36,7 +36,7 @@ const getUserFCMTokens = function(userId){
                 return;
             }
 
-            const tokenDocs = tokenSnapshot.docs();
+            const tokenDocs = tokenSnapshot.docs;
             const tokens = tokenDocs.map(doc => doc.data());
             resolve(tokens); 
         } 
