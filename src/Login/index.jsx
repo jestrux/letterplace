@@ -4,6 +4,7 @@ import { db, auth, google_auth_provider, fb_auth_provider } from '../data/fireba
 
 import './styles.css';
 import logo from '../logo.png';
+import { setUserFcmToken } from '../data/methods';
 
 const Login = ( props ) => {
     const [ authenticating, setAuthenticating ] = useState(false);
@@ -53,6 +54,7 @@ const Login = ( props ) => {
                     await userRef.set(dbUser);
                 }
                 updateDpInGames(user.uid, authDp);
+                setUserFcmToken(user.id);
                 props.onLogin(dbUser);
             }
             else {
