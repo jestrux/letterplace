@@ -17,19 +17,15 @@ class GameDetail extends React.Component {
         if(!newProps.game)
             return;
 
-        let { game } = newProps;
-        if(game && game.players){
-            this.setState({game, playedTiles: []}, () => {
-                this.setWord();
-                this.setScore();
-
-                this.showLastPlayedIfTurn(game);
-            });
-        }
+        this.setupGame(newProps);
     }
     
     componentWillMount(){
-        let { game } = this.props;
+        this.setupGame(this.props);
+    }
+
+    setupGame = (props) => {
+        let { game } = props;
         if(game && game.players){
             this.setState({game, playedTiles: []}, () => {
                 this.setWord();
@@ -40,7 +36,7 @@ class GameDetail extends React.Component {
     }
 
     showLastPlayedIfTurn(game){
-        const curUserIdx = _findIndex(game.players, ['id', this.props.user.id]);
+        const curUserIdx = game.players.indexOf(this.props.user.id);
         const isCurUserTurn = game.turn === curUserIdx;
         console.log("Game changed: ", isCurUserTurn);
 
@@ -110,16 +106,17 @@ class GameDetail extends React.Component {
             return;
         }
 
-        const curUserIdx = _findIndex(gamePlayers, ['id', user.id]);
+        const curUserIdx = gamePlayers.indexOf(user.id);
         const otherUserIdx = curUserIdx === 0 ? 1 : 0;
         const otherUserTiles = this.state.playedTiles.filter(p => p.owner === otherUserIdx && !p.locked);
         const newTiles = this.state.playedTiles.filter(p => p.owner === -1);
         const addedPoints = otherUserTiles.length + newTiles.length;
 
-        let players = JSON.parse(JSON.stringify(gamePlayers));
+        let players = JSON.parse(JSON.stringify([game.player1, game.player2]));
         players[curUserIdx].points += addedPoints;
         players[otherUserIdx].points -= otherUserTiles.length;
-        game.players = players;
+        game.player1 = players[0];
+        game.player2 = players[1];
         this.setState({game});
     }
     
@@ -171,7 +168,7 @@ class GameDetail extends React.Component {
         let {game, playedTiles, playedWord} = this.state;
         game = JSON.parse(JSON.stringify(game));
         const { players, words } = game;
-        const curUserIdx = _findIndex(players, ['id', this.props.user.id]);
+        const curUserIdx = players.indexOf(this.props.user.id);
         const notTurn = game.turn !== curUserIdx;
 
         if(notTurn){
@@ -270,13 +267,16 @@ class GameDetail extends React.Component {
         const invalidWord = !playedWord.length || window.letterpressDictionary.indexOf(playedWord.toLowerCase()) === -1;
         const subWordAlreadyPlayed = playedWord.length && words && words.length && words.filter(w => w.word.indexOf(playedWord) !== -1).length > 0;
 
-        const curUserIdx = _findIndex(game.players, ['id', this.props.user.id]);
-        let turnMessage = game.next === curUserIdx ? "You" : game.players[game.next].name;
+        const curUserIdx = game && game.players ? game.players.indexOf(this.props.user.id) : 0;
+        const nextPlayer = game.next === 0 ? game.player1 : game.player2;
+        let turnMessage = "You";
+        if(nextPlayer && (game.next !== curUserIdx))
+            turnMessage = nextPlayer.name;
         turnMessage += " played <strong>"+game.lastword+"</strong>";
 
         const header = (
             <div id="detailHeader">
-                { !playing && <button id="backButton" onClick={ this.props.onGoHome }>back</button> }
+                { !playing && <button id="backButton" onClick={ () => window.history.back() }>back</button> }
     
                 { playing && 
                     <React.Fragment>
@@ -291,62 +291,64 @@ class GameDetail extends React.Component {
 
         return ( 
             <React.Fragment>
-                <div id="GameDetail" className={showLastPlayedTiles ? 'show-last-played' : ''}>
-                    { !savingGame && <GameToolbar>{ header }</GameToolbar> }
+                { game && game.players && 
+                    <div id="GameDetail" className={showLastPlayedTiles ? 'show-last-played' : ''}>
+                        { !savingGame && <GameToolbar>{ header }</GameToolbar> }
 
-                    <div id="gamePlayers" className={ !playing ? 'visible' : '' }>
-                        <div onClick={() => this.playerFaceClicked(0)} className={ 'game-player ' + ((game.turn === 0) ? 'current' : '') } 
-                             style={{ color: game.colors[0] }}>
-                            <img src={game.players[0].dp} alt=""/>
-                            <span>{ game.players[0].points }</span>
+                        <div id="gamePlayers" className={ !playing ? 'visible' : '' }>
+                            <div onClick={() => this.playerFaceClicked(0)} className={ 'game-player ' + ((game.turn === 0) ? 'current' : '') } 
+                                style={{ color: game.colors[0] }}>
+                                <img src={game.player1.dp} alt=""/>
+                                <span>{ game.player1.points }</span>
+                            </div>
+                            <div onClick={() => this.playerFaceClicked(1)} className={ 'game-player ' + ((game.turn === 1) ? 'current' : '') } 
+                                style={{ color: game.colors[1] }}>
+                                <img src={game.player2.dp} alt=""/>
+                                <span>{ game.player2.points }</span>
+                            </div>
+
+                            { showLastPlayedTiles &&
+                                <Toast style={{ top: '4em', left: '50%', transform: 'translateX(-50%)' }}>
+                                    <div dangerouslySetInnerHTML={{__html: turnMessage}}></div>
+                                </Toast>
+                            }
                         </div>
-                        <div onClick={() => this.playerFaceClicked(1)} className={ 'game-player ' + ((game.turn === 1) ? 'current' : '') } 
-                             style={{ color: game.colors[1] }}>
-                            <img src={game.players[1].dp} alt=""/>
-                            <span>{ game.players[1].points }</span>
-                        </div>
-
-                        { showLastPlayedTiles &&
-                            <Toast style={{ top: '4em', left: '50%', transform: 'translateX(-50%)' }}>
-                                <div dangerouslySetInnerHTML={{__html: turnMessage}}></div>
-                            </Toast>
-                        }
-                    </div>
-                    <div id="playedTiles" className={ playing ? 'visible' : '' }>
-                        { playedTiles.map( (tile, index) => (
-                                <GameTile 
-                                    key={ index } 
-                                    tile={tile}
-                                    onClicked={ () => this.unPlayTile(index) }
-                                    background={ tile.owner === - 1 ? null : game.colors[tile.owner] } />
-                            ))
-                        }
-                    </div>
-                    <div id="gameTiles">
-                        { 
-                            tiles.map( (tile, index) => {
-                                const hidden = played_indexes.indexOf(index) !== -1;
-
-                                return (
+                        <div id="playedTiles" className={ playing ? 'visible' : '' }>
+                            { playedTiles.map( (tile, index) => (
                                     <GameTile 
                                         key={ index } 
-                                        tile={tile} 
-                                        onClicked={ () => this.playTile(index, tile) }
-                                        hidden={hidden}
+                                        tile={tile}
+                                        onClicked={ () => this.unPlayTile(index) }
                                         background={ tile.owner === - 1 ? null : game.colors[tile.owner] } />
-                                );
-                            })
+                                ))
+                            }
+                        </div>
+                        <div id="gameTiles">
+                            { 
+                                tiles.map( (tile, index) => {
+                                    const hidden = played_indexes.indexOf(index) !== -1;
+
+                                    return (
+                                        <GameTile 
+                                            key={ index } 
+                                            tile={tile} 
+                                            onClicked={ () => this.playTile(index, tile) }
+                                            hidden={hidden}
+                                            background={ tile.owner === - 1 ? null : game.colors[tile.owner] } />
+                                    );
+                                })
+                            }
+                        </div>
+
+                        { savingGame &&  
+                            <div id="savingGameLoader">
+                                <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
+
+                                Saving Game...
+                            </div>
                         }
                     </div>
-
-                    { savingGame &&  
-                        <div id="savingGameLoader">
-                            <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
-
-                            Saving Game...
-                        </div>
-                    }
-                </div>
+                }
             </React.Fragment>
         );
     }
