@@ -138,21 +138,10 @@ class App extends Component {
     this.setState({ user }, () => {
       this.fetchUserGames();
       this.unsubscribeAuthListener();
-
-      const fcmToken = user.fcm_token;
-      if(fcmToken && fcmToken.length){
-        setTimeout(() => {
-          this.sendWelcomeMessage(fcmToken);
-        }, 300);
-      }
     });
   }
   
   handleLogout = async () => {
-    if(this.state.user){
-      await db.doc("users/" + this.state.user.uid)
-        .set({ ...this.state.user, fcm_token: null })
-    }
     auth.signOut().then(() => {
       this.setState({user: null, sessionUser: null, games: []});
     }, (error) => {
@@ -187,25 +176,7 @@ class App extends Component {
       cur_page: 'game-detail'
     });
   }
-
-  sendWelcomeMessage(token){
-    // console.log(token);
-    // var message = {
-    //   data: {
-    //     score: '850',
-    //     time: '2:45'
-    //   },
-    //   token
-    // };
-
-    // messaging.send(message).then((response) => {
-    //   console.log('Successfully sent welcome notification:', response);
-    // })
-    // .catch((error) => {
-    //   console.log('Error sending welcome notification:', error);
-    // });
-  }
-
+  
   render() {
     const { sessionUserFetched, sessionUser, user, games, fetchingGames, cur_page, cur_game, tiles_played, newGameIndex } = this.state;
     const loadingLocalUser = sessionUserFetched && sessionUser && !user;
