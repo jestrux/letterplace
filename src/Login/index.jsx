@@ -54,7 +54,7 @@ const Login = ( props ) => {
                     await userRef.set(dbUser);
                 }
                 updateDpInGames(user.uid, authDp);
-                setUserFcmToken(user.id);
+                setUserFcmToken(user.uid);
                 props.onLogin(dbUser);
             }
             else {
