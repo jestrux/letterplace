@@ -35,12 +35,9 @@ const NewGame = ( props ) => {
         newgame = { 
             ...newgame,
             id: ref.id,
-            players: [
-                { id, name: username, dp, points: 0 },
-                { ...opponent, points: 0 }
-            ],
-            player1: id,
-            player2: opponent.id,
+            players: [ id, opponent.id ],
+            player1: { id, name: username, dp, points: 0 },
+            player2: { ...opponent, points: 0 },
             colors: themes[themeIndex],
             stakes: points,
             summary_image: getTilesImage(newgame.tiles, themes[themeIndex])
