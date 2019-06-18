@@ -35,14 +35,14 @@ const GameListItem = ( props ) => {
             </div>
             <div className="item-text">
                 <h3>
-                    {_getTurnMessage(user, game.turn, game.players)}
+                    {_getTurnMessage(user, game.turn, [game.player1, game.player2])}
                 </h3>
                 <p style={{ display: _showTagline(game.lastword) }}>
-                    {_getLastPlayedMessage(user, game.next, game.players, game.lastword)}
+                    {_getLastPlayedMessage(user, game.next, [game.player1, game.player2], game.lastword)}
                 </p>
             </div>
             <div className="item-secondary">
-                {game.players[0].points} - {game.players[1].points}
+                {game.player1.points} - {game.player2.points}
             </div>
         </div>
     );
