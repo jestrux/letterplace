@@ -1,4 +1,4 @@
-import { db } from './firebase';
+import { db, messaging } from './firebase';
 import axios from 'axios';
 
 const isLocalhost = Boolean(
@@ -46,6 +46,35 @@ const getUserFCMToken = function(userId){
             reject(error);
 		})
 	});
+}
+
+export const setUserFcmToken = (userId) => {
+    console.log("Setting fcm token....");
+    return new Promise(async (resolve, reject) => {
+        messaging.getToken().then(function(token) {
+            if (token) {
+                const tokenData = {
+                    createdAt: new Date().getTime(),
+                    platform: "web",
+                    token
+                };
+                db.collection("users/" + userId + "/tokens")
+                    .add(tokenData)
+                    .then(() => {
+                        console.log("Auth token persisted");
+                        resolve();
+                    });
+            } 
+            else {
+                console.log('No Instance ID token available. Request permission to generate one.');
+                reject('No Instance ID token available. Request permission to generate one.');
+            }
+        })
+        .catch(function(err) {
+            console.log('An error occurred while retrieving token. ', err);
+            reject(err);
+        });
+    });
 }
 
 const myToken = "fTd3hqzfdXk:APA91bEg7hWRmDJdTmVyn4-eJxhfCafOJhJUQAVEcjq8oXk2OwZ8VACD_Xhbc9ox_yit0haJWaDzKcYeghtqK6EkbPGfmNFkTZRtXmNBG7wqe88WWQloK2xrSHftPREsGZpTnWd1O2lr";

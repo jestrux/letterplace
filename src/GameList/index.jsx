@@ -6,9 +6,10 @@ import logo from '../logo.png';
 import GameToolbar from '../GameToolbar';
 import GameListItem from './GameListItem';
 import NewGame from '../NewGame';
-import { messaging, db } from '../data/firebase';
+import { messaging } from '../data/firebase';
 import { AuthUser } from '../App';
 import Toast from '../Toast';
+import { setUserFcmToken } from '../data/methods';
 
 const GameList = ( props ) => { 
     const authUser = useContext(AuthUser);
@@ -33,26 +34,9 @@ const GameList = ( props ) => {
         messaging.requestPermission().then(() => {
             console.log('Notification permission granted.');
             setNotificationsAllowed(true);
-            saveUserFCMToken();
+            setUserFcmToken(authUser.id);
         }).catch(function(err) {
             console.log('Unable to get permission to notify.', err);
-        });
-    }
-
-    function saveUserFCMToken(){
-        messaging.getToken().then(function(currentToken) {
-            if (currentToken) {
-                authUser.fcm_token = currentToken;
-
-                db.doc("users/" + authUser.id)
-                    .set(user).then(() => console.log("Auth token persisted"));
-            } 
-            else {
-                console.log('No Instance ID token available. Request permission to generate one.');
-            }
-        })
-        .catch(function(err) {
-            console.log('An error occurred while retrieving token. ', err);
         });
     }
 
