@@ -95,31 +95,23 @@ class App extends Component {
     })
   }
 
-  fetchUserGames = () => {
+  fetchUserGames = async () => {
     const userId = this.state.user.id;
     this.setState({ fetchingGames: true, games: [] });
 
     const gamesRef = db.collection("games");
-    const createdGames = gamesRef
-      .where("player1", "==", userId)
-      .orderBy("updated_at", "desc").get();
-    const invitedGames = gamesRef
-      .where("player2", "==", userId)
+    const playerGames = gamesRef
+      .where("players", "array-contains", userId)
       .orderBy("updated_at", "desc").get();
 
-    Promise.all([createdGames, invitedGames])
-      .then(res => {
-        let games = [];
-        const [ createdGamesSnapshot, invitedGamesSnapshot ] = res;
-        createdGamesSnapshot.forEach(doc => games.push(doc.data()));
-        invitedGamesSnapshot.forEach(doc => games.push(doc.data()));
-
-        games.sort(compareValues('updated_at', 'desc'));
-        this.setState({ fetchingGames: false, games });
-      })
-      .catch(function(error) {
-          console.log("Error getting documents: ", error);
-      });
+    playerGames.then(snapshot => {
+      let games = snapshot.docs.map(doc => doc.data());
+      games.sort(compareValues('updated_at', 'desc'));
+      this.setState({ fetchingGames: false, games });
+    })
+    .catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
   }
 
   handleLogin = (user) => {
