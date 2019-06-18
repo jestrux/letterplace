@@ -58,9 +58,8 @@ export const setUserFcmToken = (userId) => {
                     platform: "web",
                     token
                 };
-                db.collection("users/" + userId + "/tokens")
-                    .add(tokenData)
-                    .then(() => {
+                db.doc("users/" + userId + "/tokens/" + token)
+                    .set(tokenData).then(() => {
                         console.log("Auth token persisted");
                         resolve();
                     });
