@@ -27,24 +27,23 @@ export const getGameById = function(gameId){
 	});
 }
 
-const getUserFCMToken = function(userId){
+const getUserFCMTokens = function(userId){
 	return new Promise(async (resolve, reject) => {
-		db.doc("users/" + userId).get().then(doc => {
-			if (doc.exists){
-                const user = doc.data();
-                console.log("User fcm token fetched!", user.fcm_token);
-				if(user.fcm_token && user.fcm_token.length)
-					resolve(user.fcm_token);
-				else
-					reject("User has no fcm token.");
-			}
-			else
-				reject("user account deleted.");
-		})
-		.catch(function(error) {
+        try {
+            const tokenSnapshot = await db.collection("users/" + userId + "/tokens").get();
+            if(tokenSnapshot.empty){
+                reject("No tokens found!");
+                return;
+            }
+
+            const tokenDocs = tokenSnapshot.docs();
+            const tokens = tokenDocs.map(doc => doc.data());
+            resolve(tokens); 
+        } 
+        catch (error) {
             console.log("Error getting other user token:", error);
             reject(error);
-		})
+        }
 	});
 }
 
@@ -76,10 +75,30 @@ export const setUserFcmToken = (userId) => {
     });
 }
 
-const myToken = "fTd3hqzfdXk:APA91bEg7hWRmDJdTmVyn4-eJxhfCafOJhJUQAVEcjq8oXk2OwZ8VACD_Xhbc9ox_yit0haJWaDzKcYeghtqK6EkbPGfmNFkTZRtXmNBG7wqe88WWQloK2xrSHftPREsGZpTnWd1O2lr";
+const sendFcmNotification = async (userId, notification) => {
+    const otherPlayerTokens = await getUserFCMTokens(userId);
+    const sendTokenPromises = otherPlayerTokens.map(token => {
+        const notificationData = {
+            ...notification,
+            "to": token
+        };
+
+        return axios({
+            method: 'POST',
+            url: 'https://fcm.googleapis.com/fcm/send',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "key=AAAAmT5Cni4:APA91bF4h8xZBRG70v4R53Q2br5dCpqCNLJiM02Lc6uwuhJQk_iog2C3zjLbBEZLGf4cfOncQj32wJRPvi15f0Ux6Z-Vp_tQ51wcV3X78vw3xA7h5RhkLKzk-rx_QUqBaYQhZuEkV4Jfv1z5g76blsgajGpjzLgPrA"
+            },
+            data: notificationData
+        });
+    });
+
+    return Promise.all(sendTokenPromises);
+}
+
 export const sendTurnNotification = async function(player, otherPlayerId, game){
     try {
-        const otherPlayerToken = await getUserFCMToken(otherPlayerId);
         const score = game.player1.points + " - " + game.player2.points;
         const notification = {
             "notification": {
@@ -90,31 +109,11 @@ export const sendTurnNotification = async function(player, otherPlayerId, game){
             },
             "data": {
                 "action": "game-changed",
-                "gameId": game.id,
-                // "game": {
-                //     "id": game.id,
-                //     "tiles": game.tiles,
-                //     "turn": game.turn,
-                //     "next": game.next,
-                //     "players": game.players,
-                //     "lastword": game.lastword,
-                //     "updated_at" : game.updated_at,
-                //     // "summary_image" : game.summary_image
-                // },
-                // "newWord" : game.words[game.words.length - 1]
-            },
-            "to": otherPlayerToken
-        }
+                "gameId": game.id
+            }
+        };
 
-        return await axios({
-            method: 'POST',
-            url: 'https://fcm.googleapis.com/fcm/send',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "key=AAAAmT5Cni4:APA91bF4h8xZBRG70v4R53Q2br5dCpqCNLJiM02Lc6uwuhJQk_iog2C3zjLbBEZLGf4cfOncQj32wJRPvi15f0Ux6Z-Vp_tQ51wcV3X78vw3xA7h5RhkLKzk-rx_QUqBaYQhZuEkV4Jfv1z5g76blsgajGpjzLgPrA"
-            },
-            data: notification
-        });
+        return sendFcmNotification(otherPlayerId, notification);
     } catch (error) {
         return false;
     }
@@ -122,7 +121,6 @@ export const sendTurnNotification = async function(player, otherPlayerId, game){
 
 export const sendNewGameNotification = async function(player, otherPlayerId, game){
     try {
-        const otherPlayerToken = await getUserFCMToken(otherPlayerId);
         const notification = {
             "notification": {
                 "title": "New Game",
@@ -133,19 +131,10 @@ export const sendNewGameNotification = async function(player, otherPlayerId, gam
             "data": {
                 "action": "new-game",
                 "gameId": game.id
-            },
-            "to": otherPlayerToken
+            }
         }
 
-        return await axios({
-            method: 'POST',
-            url: 'https://fcm.googleapis.com/fcm/send',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "key=AAAAmT5Cni4:APA91bF4h8xZBRG70v4R53Q2br5dCpqCNLJiM02Lc6uwuhJQk_iog2C3zjLbBEZLGf4cfOncQj32wJRPvi15f0Ux6Z-Vp_tQ51wcV3X78vw3xA7h5RhkLKzk-rx_QUqBaYQhZuEkV4Jfv1z5g76blsgajGpjzLgPrA"
-            },
-            data: notification
-        });
+        return sendFcmNotification(otherPlayerId, notification);
     } catch (error) {
         return false;
     }
