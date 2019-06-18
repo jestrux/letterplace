@@ -13,17 +13,13 @@ export const getTilesImage = function(tiles, colors){
     canvas.height = 50;
     var defaultColor = "#eee";
 
-	// var space = 0.5;
 	var space = 0.5;
-	// ctx.fillStyle = "#000";
-	// ctx.fillRect(0, 0, (50 + space), (50 + space));
 	ctx.fillStyle = "#f0f0f0";
 	colors.push(defaultColor);
 
 	for(var i = 0; i < 25; i++){
 		var x = (i % 5)*10 + (space * (i%5)) + space;
 		var y = Math.floor(i / 5)*10 + space;
-		// var defaultColor = i%2 == 0 ? "#f0f0f0" : "#eee";
 
 		var tile = tiles[i];
 		var fillColor = _getTileBg(colors, tile.owner, tile.locked, defaultColor);
@@ -43,12 +39,11 @@ function _getTileBg(colors, owner, locked, defaultColor){
 
 		if(!locked)
 			return color;
-		else{
+		else
 			return tinycolor(color).darken(15).toHexString();
-		}
-	}else{
-		return defaultColor;
 	}
+	else
+		return defaultColor;
 }
 
 export const compareValues = function(key, order='asc') {

@@ -10,7 +10,6 @@ import Login from './Login';
 import GameList from './GameList';
 import GameDetail from './GameDetail';
 
-// import { auth_user, db_users } from './data/users';
 import { db, auth, messaging } from './data/firebase';
 import { compareValues } from './LetterPlaceHelpers';
 import { getGameById } from './data/methods';
@@ -57,21 +56,6 @@ class App extends Component {
         } catch (error) {
           console.log("Failed to fetch game", error);
         }
-
-        // console.log("Game changed")
-        // const game = JSON.parse(message.data.game);
-        // const games = this.state.games;
-        // const changedGameIdx = _findIndex(games, ['id', game.id]);
-
-        // if(changedGameIdx !== -1){
-        //   let changedGame = {...games[changedGameIdx], ...game};
-        //   changedGame.words.push(message.data.newWord);
-        //   games.splice(changedGameIdx, 1, changedGame);
-        //   games.sort(compareValues('updated_at', 'desc'));
-        //   this.setState({ games });
-        // }else{
-        //   console.log("No game with that id mate!!");
-        // }
       }
 
       if(hasData && message.data.action === "new-game"){
@@ -88,7 +72,8 @@ class App extends Component {
               this.setState({newGameIndex: -1})
             }, 1000);
           });
-        } catch (error) {
+        } 
+        catch (error) {
           console.log("Failed to fetch game", error);
         }
       }
@@ -158,7 +143,6 @@ class App extends Component {
   }
 
   handleStartGame = (game) => {
-    // console.log("Starting new game: ", game);
     this.setState({ 
       games: [ game, ...this.state.games ], 
       cur_game: 0,
