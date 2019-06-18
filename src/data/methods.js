@@ -105,7 +105,7 @@ export const sendTurnNotification = async function(player, otherPlayerId, game){
                 "title": "Your Turn",
                 "body": `${player} played ${game.lastword}, new score: ${score}`,
                 "icon": game.summary_image,
-                "click_action": APP_URL
+                "click_action": APP_URL + "/#view/7BA4gJLiU40qkLqkSXVv"
             },
             "data": {
                 "action": "game-changed",
@@ -126,7 +126,7 @@ export const sendNewGameNotification = async function(player, otherPlayerId, gam
                 "title": "New Game",
                 "body": `${player} played ${game.lastword}`,
                 "icon": game.summary_image,
-                "click_action": APP_URL
+                "click_action": APP_URL + "/#view/" + game.id
             },
             "data": {
                 "action": "new-game",
