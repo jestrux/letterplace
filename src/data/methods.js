@@ -77,10 +77,10 @@ export const setUserFcmToken = (userId) => {
 
 const sendFcmNotification = async (userId, notification) => {
     const otherPlayerTokens = await getUserFCMTokens(userId);
-    const sendTokenPromises = otherPlayerTokens.map(token => {
+    const sendTokenPromises = otherPlayerTokens.map(tokenData => {
         const notificationData = {
             ...notification,
-            "to": token
+            "to": tokenData.token
         };
 
         return axios({
