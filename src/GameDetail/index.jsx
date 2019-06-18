@@ -275,7 +275,7 @@ class GameDetail extends React.Component {
 
         const header = (
             <div id="detailHeader">
-                { !playing && <button id="backButton" onClick={ () => window.history.back() }>back</button> }
+                { !playing && <button id="backButton" onClick={ this.props.onGoHome }>back</button> }
     
                 { playing && 
                     <React.Fragment>

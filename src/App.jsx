@@ -52,10 +52,15 @@ class App extends Component {
 
   setPageFromUrl = () => {
     const { state } = window.history;
+    const { hash } = window.location;
     if(state){
       const { page, gameId } = state;
+      console.log("State found", page, gameId);
       if(gameId && gameId.length){
         const cur_game = _findIndex(this.state.games, ['id', gameId]);
+        if(cur_game === -1)
+          return;
+
         this.setState({cur_page: page, cur_game}, () => {
           const { cur_game, cur_page } = this.state;
           console.log("Game set from url: ", cur_game, cur_page);
@@ -63,6 +68,18 @@ class App extends Component {
       }
       else
         this.setState({cur_page: page});
+    }
+    else if(hash && hash.indexOf('view') !== -1){
+      const gameId = hash.replace("#view/", "");
+      const cur_game = _findIndex(this.state.games, ['id', gameId]);
+      console.log("Hash found: ", gameId);
+      if(cur_game === -1)
+        return;
+        
+      this.setState({cur_page: "game-detail", cur_game}, () => {
+        const { cur_game, cur_page } = this.state;
+        console.log("Game set from url: ", cur_game, cur_page);
+      });
     }
     else
       this.setState({cur_page: 'game-list'});
@@ -151,6 +168,10 @@ class App extends Component {
   }
   
   handleGoHome = () => {
+    const { state } = window.history;
+    if(state && state.gameId && state.gameId.length)
+      window.history.back();
+
     this.setState({ cur_page: 'game-list', cur_game: null});
   }
   
