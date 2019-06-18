@@ -35,7 +35,40 @@ class App extends Component {
     });
   }
 
-  componentDidMount(){
+  connectToUrlAndNotifications = () =>{
+    console.log("Connect to url and notifications!");
+    this.connectToUrl();
+    this.listenForFcmNotifications();
+  }
+
+  connectToUrl = () => {
+    this.setPageFromUrl();
+
+    window.onpopstate = () => {
+      console.log("Back pressed");
+      this.setPageFromUrl();
+    }
+  }
+
+  setPageFromUrl = () => {
+    const { state } = window.history;
+    if(state){
+      const { page, gameId } = state;
+      if(gameId && gameId.length){
+        const cur_game = _findIndex(this.state.games, ['id', gameId]);
+        this.setState({cur_page: page, cur_game}, () => {
+          const { cur_game, cur_page } = this.state;
+          console.log("Game set from url: ", cur_game, cur_page);
+        });
+      }
+      else
+        this.setState({cur_page: page});
+    }
+    else
+      this.setState({cur_page: 'game-list'});
+  }
+  
+  listenForFcmNotifications = () => {
     messaging.onMessage(async (message) => {
       console.log("Message received from FCM", message);
       const hasData = message.data && message.data.action;
@@ -77,7 +110,7 @@ class App extends Component {
           console.log("Failed to fetch game", error);
         }
       }
-    })
+    });
   }
 
   fetchUserGames = async () => {
@@ -85,14 +118,16 @@ class App extends Component {
     this.setState({ fetchingGames: true, games: [] });
 
     const gamesRef = db.collection("games");
-    const playerGames = gamesRef
+    const fetchPlayerGames = gamesRef
       .where("players", "array-contains", userId)
       .orderBy("updated_at", "desc").get();
 
-    playerGames.then(snapshot => {
+    fetchPlayerGames.then(snapshot => {
       let games = snapshot.docs.map(doc => doc.data());
       games.sort(compareValues('updated_at', 'desc'));
-      this.setState({ fetchingGames: false, games });
+      this.setState({fetchingGames: false, games}, () => {
+        this.connectToUrlAndNotifications()
+      });
     })
     .catch(function(error) {
         console.log("Error getting documents: ", error);
@@ -127,7 +162,7 @@ class App extends Component {
   }
   
   handleGoHome = () => {
-    this.setState( { cur_page: 'game-list', cur_game: null } );
+    this.setState({ cur_page: 'game-list', cur_game: null});
   }
   
   handleGameChanged = (game) => {
@@ -138,8 +173,11 @@ class App extends Component {
   }
   
   handleViewGame = async ( idx, image ) => {
+    var id = this.state.games[idx].id;
+    window.history.pushState({page: 'game-detail', gameId: id}, 'View Game ' + id, '#view/'+id);
+
     console.log(image);
-    this.setState( { cur_page: 'game-detail', cur_game: idx } );
+    this.setState({cur_page: 'game-detail', cur_game: idx});
   }
 
   handleStartGame = (game) => {
