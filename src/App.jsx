@@ -23,7 +23,6 @@ class App extends Component {
     fetchingGames: false, 
     cur_page: 'game-list', 
     cur_game: 0, 
-    tiles_played:false,
     sessionUserFetched: false,
     sessionUser: null,
     newGameIndex: -1
@@ -199,7 +198,7 @@ class App extends Component {
   }
   
   render() {
-    const { sessionUserFetched, sessionUser, user, games, fetchingGames, cur_page, cur_game, tiles_played, newGameIndex } = this.state;
+    const { sessionUserFetched, sessionUser, user, games, fetchingGames, cur_page, cur_game, newGameIndex } = this.state;
     const loadingLocalUser = sessionUserFetched && sessionUser && !user;
     
     return (
