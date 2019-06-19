@@ -134,11 +134,11 @@
     transition: transform 0.2s ease-out;
 }
 
-.App.animating-back #GameDetail > *:not(#gameTiles){
+.App.animating-back #GameDetail > *:not(#gameTiles):not(#savingGameLoader){
     animation: fadeOutUp 0.2s;
 }
 
-.App:not(.animating-back) #GameDetail > *:not(#gameTiles){
+.App:not(.animating-back) #GameDetail > *:not(#gameTiles):not(#savingGameLoader){
     animation: fadeInDown 0.4s;
 }
 
@@ -169,13 +169,13 @@
     background: #da1d1d !important;
 }
 
-#savingGameLoader{
+#savingGameLoader,
+#savingGameLoader:before{
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
     z-index: 1;
     text-align: center;
     display: flex;
@@ -183,12 +183,112 @@
     align-items: center;
     justify-content: center;
     padding-bottom: 40px;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    font-size: 1.1em;
+    font-weight: 500;
 }
 
-#savingGameLoader svg{
+#savingGameLoader:not(.visble){
+    pointer-events: none;
+}
+
+#savingGameLoader:before{
+    content: '';
+    background: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+#savingGameLoader.invisible:before{
+    opacity: 0;
+    pointer-events: none;
+}
+
+#savingGameLoader svg,
+#savingGameLoader #loaderIcon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 80px;
     height: 80px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
     margin-bottom: 30px;
+}
+
+#scoreToast{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    bottom: 5em;
+    left: 50%;
+    padding: 0 0.8em;
+    margin: auto;
+    transform: translateX(-50%);
+    height: 60px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+    z-index: 100000;
+}
+
+#scoreToast span{
+    font-weight: bold;
+    font-size: 2em;
+    margin: 0 0.3em;
+}
+
+#savingGameLoader.visible #loaderIcon{
+    animation: fallInDown 0.4s forwards;
+}
+
+@keyframes fallInDown{
+    from{
+        transform: translateY(-25vh);
+        opacity: 0;
+    }
+}
+
+#savingGameLoader.invisible > span{
+    opacity: 0;
+    transition: all 0.35s ease-out;
+}
+
+#savingGameLoader.invisible #loaderIcon{
+    pointer-events: none;
+    animation: fallDownOut 0.35s ease-out forwards;
+}
+
+@keyframes fallDownOut{
+    to{
+        transform: translateY(50vh);
+        opacity: 0;
+    }
+}
+
+#savingGameLoader #loaderIcon div{
+    height: 30px;
+    width: 30px;
+    background-position: center;
+}
+
+#savingGameLoader:not(.invisible) #loaderIcon div{
+    animation: rotate 2s infinite;
+}
+
+@keyframes rotate{
+    30%{
+        transform: rotate(90);
+    }
+    60%{
+        transform: rotate(270deg);
+    }
 }
 
 #savingGameLoader svg circle{

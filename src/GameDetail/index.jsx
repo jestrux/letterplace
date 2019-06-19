@@ -5,13 +5,24 @@ import './GameDetail.css';
 
 import GameToolbar from '../GameToolbar';
 import GameTile from './GameTile';
-import { getTilesImage, getTileBg, isSurrounded } from '../LetterPlaceHelpers';
+import { getLoaderImage, getTilesImage, getTileBg, isSurrounded } from '../LetterPlaceHelpers';
 import { db } from '../data/firebase';
 import { sendTurnNotification, sendNewGameNotification } from '../data/methods';
 import Toast from '../Toast';
 
+let addedPoints = 0;
+let capturedPoints = 0;
+
 class GameDetail extends React.Component {
     state = { showLastPlayedTiles: false, game: {}, savingGame: false, playedTiles: [], playedWord: '' }
+
+    componentDidMount(){
+        this.setState({savingGame: true}, () => {
+            setTimeout(() => {
+                this.setState({savingGame: false});
+            }, 1600);
+        });
+    }
 
     componentWillReceiveProps(newProps){
         if(newProps.closingCurGame){
@@ -115,7 +126,8 @@ class GameDetail extends React.Component {
         const otherUserIdx = curUserIdx === 0 ? 1 : 0;
         const otherUserTiles = this.state.playedTiles.filter(p => p.owner === otherUserIdx && !p.locked);
         const newTiles = this.state.playedTiles.filter(p => p.owner === -1);
-        const addedPoints = otherUserTiles.length + newTiles.length;
+        addedPoints = otherUserTiles.length + newTiles.length;
+        capturedPoints = otherUserTiles.length;
 
         let players = _cloneDeep([game.player1, game.player2]);
         players[curUserIdx].points += addedPoints;
@@ -280,6 +292,7 @@ class GameDetail extends React.Component {
                 console.log("Game saved!");
                 await this.notifyOtherPlayer(game);
                 this.clearPlayedTiles();
+                this.showScoreToast(game);
                 this.setState({savingGame: false}, () => {
                     this.props.onGameChanged(game);
                 });
@@ -288,6 +301,26 @@ class GameDetail extends React.Component {
                 this.clearPlayedTiles();
                 window.alert("Failed to save game");
             });
+    }
+
+    showScoreToast(game){
+        const reducedColor = game.colors[game.next];
+        const addedColor = game.colors[game.turn];
+
+        var scoreToast = document.createElement('div');
+        scoreToast.setAttribute("id", "scoreToast");
+        scoreToast.classList.add("visible");
+        scoreToast.innerHTML = `<span style="color: ${reducedColor}">-${capturedPoints}</span> <span style="color: ${addedColor}">+${addedPoints}</span>`;
+        document.querySelector("#GameDetail").appendChild(scoreToast);
+
+        setTimeout(() => {
+            scoreToast.classList.remove("visible");
+            scoreToast.classList.add("invisible");
+
+            setTimeout(() => {
+                scoreToast.remove();
+            }, 500);
+        }, 500);
     }
 
     notifyOtherPlayer = async (game) => {
@@ -322,6 +355,8 @@ class GameDetail extends React.Component {
             turnMessage = nextPlayer.name;
         turnMessage += " played <strong>"+game.lastword+"</strong>";
 
+        const loaderImage = getLoaderImage();
+
         const header = (
             <div id="detailHeader">
                 { !playing && <button id="backButton" onClick={ this.props.onGoHome }>back</button> }
@@ -342,7 +377,8 @@ class GameDetail extends React.Component {
                 { game && game.players && 
                     <div id="GameDetail" className={showLastPlayedTiles ? 'show-last-played' : ''}>
                         <div id="gameDetailBg"></div>
-                        { !savingGame && <GameToolbar>{ header }</GameToolbar> }
+
+                        <GameToolbar>{ header }</GameToolbar>
 
                         <div id="gamePlayers" className={ !playing ? 'visible' : '' }>
                             <div onClick={() => this.playerFaceClicked(0)} className={ 'game-player ' + ((game.turn === 0) ? 'current' : '') } 
@@ -389,13 +425,14 @@ class GameDetail extends React.Component {
                             }
                         </div>
 
-                        { savingGame &&  
-                            <div id="savingGameLoader">
-                                <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
-
-                                Saving Game...
+                        <div id="savingGameLoader"
+                            className={ savingGame ? 'visible' : 'invisible'}>
+                            <div id="loaderIcon">
+                                <div style={{ backgroundImage: `url(${loaderImage})` }}></div>
                             </div>
-                        }
+                            {/* <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg> */}
+                            <span>Saving Game...</span>
+                        </div>
                     </div>
                 }
             </React.Fragment>
