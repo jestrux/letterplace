@@ -1,5 +1,6 @@
 import React from 'react';
 import _find from 'lodash/find';
+import _cloneDeep from 'lodash/cloneDeep';
 import './GameDetail.css';
 
 import GameToolbar from '../GameToolbar';
@@ -73,7 +74,7 @@ class GameDetail extends React.Component {
     }
 
     playTile = (index, tile) => {
-        const clonedTile = JSON.parse(JSON.stringify(tile));
+        const clonedTile = _cloneDeep(tile);
         const gameTiles = document.querySelectorAll('#gameTiles .GameTile');
         const fromTile = gameTiles[index];
 
@@ -98,7 +99,7 @@ class GameDetail extends React.Component {
     
     setScore = () => {
         let { user, game } = this.props;
-        game = JSON.parse(JSON.stringify(game));
+        game = _cloneDeep(game);
         const gamePlayers = game.players;
 
         if(!gamePlayers){
@@ -111,7 +112,7 @@ class GameDetail extends React.Component {
         const newTiles = this.state.playedTiles.filter(p => p.owner === -1);
         const addedPoints = otherUserTiles.length + newTiles.length;
 
-        let players = JSON.parse(JSON.stringify([game.player1, game.player2]));
+        let players = _cloneDeep([game.player1, game.player2]);
         players[curUserIdx].points += addedPoints;
         players[otherUserIdx].points -= otherUserTiles.length;
         game.player1 = players[0];
@@ -165,7 +166,7 @@ class GameDetail extends React.Component {
 
     submitPlayedWord = () => {
         let {game, playedTiles, playedWord} = this.state;
-        game = JSON.parse(JSON.stringify(game));
+        game = _cloneDeep(game);
         const { players, words } = game;
         const curUserIdx = players.indexOf(this.props.user.id);
         const notTurn = game.turn !== curUserIdx;
