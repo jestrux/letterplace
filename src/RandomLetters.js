@@ -2,16 +2,16 @@
 * Taken from
 * https://github.com/jrusev/demos/blob/gh-pages/LetterpressJS/game/scripts/random-letters.js
 */
-export const generateRandomLeters =  () => {
+export default function generateRandomLeters(){
     var minNumberOfVowels = 5,
         maxNumberOfVowels = 6,
         lettersCount = 25,
-        exactNumberOfVowels = getRandomInt(minNumberOfVowels, maxNumberOfVowels),
-        vowelsCodes = getVowelsCodes(),
+        exactNumberOfVowels = _getRandomInt(minNumberOfVowels, maxNumberOfVowels),
+        vowelsCodes = _getVowelsCodes(),
         randomLettersIndex,
         randomVowelsIndex,
         randomVowelCode,
-        consonantCodes = getConsonantCodes(vowelsCodes),
+        consonantCodes = _getConsonantCodes(vowelsCodes),
         randomConsonantIndex,
         randomConsonantCode,
         letters = [],
@@ -21,15 +21,15 @@ export const generateRandomLeters =  () => {
 
     // generate vowels
     for (i = 0; i < exactNumberOfVowels; i += 1) {
-        randomLettersIndex = getRandomInt(0, lettersCount - 1);
-        randomVowelsIndex = getRandomInt(0, vowelsCodes.length - 1);
+        randomLettersIndex = _getRandomInt(0, lettersCount - 1);
+        randomVowelsIndex = _getRandomInt(0, vowelsCodes.length - 1);
         randomVowelCode = vowelsCodes[randomVowelsIndex];
         while (true) {
             if (!letters[randomLettersIndex]) {
                 letters[randomLettersIndex] = String.fromCharCode(randomVowelCode);
                 break;
             } else {
-                randomLettersIndex = getRandomInt(0, lettersCount - 1);
+                randomLettersIndex = _getRandomInt(0, lettersCount - 1);
             }
         }
     }
@@ -37,7 +37,7 @@ export const generateRandomLeters =  () => {
     // generate consonants
     for (j = 0; j < lettersCount; j += 1) {
         if (!letters[j]) {
-            randomConsonantIndex = getRandomInt(0, consonantCodes.length - 1);
+            randomConsonantIndex = _getRandomInt(0, consonantCodes.length - 1);
             randomConsonantCode = consonantCodes[randomConsonantIndex];
             currentLetter = String.fromCharCode(randomConsonantCode);
             letters[j] = currentLetter;
@@ -47,14 +47,14 @@ export const generateRandomLeters =  () => {
     return letters;
 }
 
-function getRandomInt(min, max) {
+function _getRandomInt(min, max) {
     if (min === max) {
         return min;
     }
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function getVowelsCodes() {
+function _getVowelsCodes() {
     var vowels = [
         'A'.charCodeAt(0),
         'E'.charCodeAt(0),
@@ -66,7 +66,7 @@ function getVowelsCodes() {
     return vowels;
 }
 
-function getConsonantCodes(vowelsCodes) {
+function _getConsonantCodes(vowelsCodes) {
     var startCode = 'A'.charCodeAt(0),
         endCode = 'Z'.charCodeAt(0),
         consonants = [],
