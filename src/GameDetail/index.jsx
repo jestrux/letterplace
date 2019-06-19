@@ -196,7 +196,7 @@ class GameDetail extends React.Component {
 
             game.lastword = playedWord;
 
-            game.tiles = game.tiles.map((tile, index) => {
+            var newTiles = game.tiles.map((tile, index) => {
                 if(playedTileIndexes.indexOf(index) !== -1){
                     tile.lastplayed = true;
                     if(tile.locked){
@@ -208,10 +208,13 @@ class GameDetail extends React.Component {
                 }
                 else if(tile.lastplayed)
                     delete tile.lastplayed;
-
-                tile.locked = isSurrounded(game.tiles, index);
                 return tile;
             });
+            // finish updating tiles before setting locked states
+            game.tiles = newTiles.map((t, index) => {
+                t.locked = isSurrounded(game.tiles, index);
+                return t;
+            })
 
             const turns = [game.turn, game.next];
             game.next = turns[0];
