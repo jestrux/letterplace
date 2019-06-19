@@ -16,14 +16,6 @@ let capturedPoints = 0;
 class GameDetail extends React.Component {
     state = { showLastPlayedTiles: false, game: {}, savingGame: false, playedTiles: [], playedWord: '' }
 
-    componentDidMount(){
-        this.setState({savingGame: true}, () => {
-            setTimeout(() => {
-                this.setState({savingGame: false});
-            }, 1600);
-        });
-    }
-
     componentWillReceiveProps(newProps){
         if(newProps.closingCurGame){
             this.flipTileGrid(true);
