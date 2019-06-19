@@ -23,6 +23,8 @@ class App extends Component {
     fetchingGames: false, 
     cur_page: 'game-list', 
     cur_game: 0, 
+    curGameImage: null,
+    closingCurGame: false,
     sessionUserFetched: false,
     sessionUser: null,
     newGameIndex: -1
@@ -80,8 +82,22 @@ class App extends Component {
         console.log("Game set from url: ", cur_game, cur_page);
       });
     }
-    else
-      this.setState({cur_page: 'game-list'});
+    else{
+      if(this.state.cur_page === 'game-detail'){
+        this.closeDetailPage();
+      }
+      else
+        this.setState({cur_page: 'game-list'});
+    }
+  }
+
+  closeDetailPage = () => {
+    this.setState({closingCurGame: true}, () => {
+      setTimeout(() => {
+        this.setState({cur_page: 'game-list', curGameImage: null, closingCurGame: false});
+        document.querySelector(".App").classList.remove("animating-back", "animating-screens");
+      }, 200);
+    });
   }
   
   listenForFcmNotifications = () => {
@@ -170,8 +186,10 @@ class App extends Component {
     const { state } = window.history;
     if(state && state.gameId && state.gameId.length)
       window.history.back();
-
-    this.setState({ cur_page: 'game-list', cur_game: null});
+    else if(this.state.curGameImage !== null)
+      this.closeDetailPage();
+    else
+      this.setState({ cur_page: 'game-list', cur_game: null, curGameImage: null});
   }
   
   handleGameChanged = (game) => {
@@ -180,13 +198,12 @@ class App extends Component {
 
     this.setState({ games });
   }
-  
+
   handleViewGame = async ( idx, image ) => {
     var id = this.state.games[idx].id;
     window.history.pushState({page: 'game-detail', gameId: id}, 'View Game ' + id, '#view/'+id);
 
-    console.log(image);
-    this.setState({cur_page: 'game-detail', cur_game: idx});
+    this.setState({cur_page: 'game-detail', cur_game: idx, curGameImage: image});
   }
 
   handleStartGame = (game) => {
@@ -229,6 +246,8 @@ class App extends Component {
                 <GameDetail
                   user={user} 
                   game={games[cur_game]}
+                  curGameImage={this.state.curGameImage}
+                  closingCurGame={this.state.closingCurGame}
                   onGoHome={ this.handleGoHome }
                   onGameChanged={ this.handleGameChanged } />}
             </div>

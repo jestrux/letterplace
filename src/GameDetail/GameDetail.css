@@ -1,4 +1,5 @@
-#GameDetail{
+#GameDetail,
+#gameDetailBg{
     height: calc(100*var(--vh));
     overflow: hidden;
     display: flex;
@@ -8,8 +9,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: #fff;
+    background: transparent;
     z-index: 100000;
+}
+
+#gameDetailBg{
+    background: #fff;
+    z-index: -1;
 }
 
 #gamePlayers, #gameTiles{
@@ -118,6 +124,45 @@
 
 #gameTiles{
     flex-wrap: wrap;
+}
+
+.App.animating-screens #gameTiles{
+    transition: transform 0.35s ease-out;
+}
+
+.App.animating-back #gameTiles{
+    transition: transform 0.2s ease-out;
+}
+
+.App.animating-back #GameDetail > *:not(#gameTiles){
+    animation: fadeOutUp 0.2s;
+}
+
+.App:not(.animating-back) #GameDetail > *:not(#gameTiles){
+    animation: fadeInDown 0.4s;
+}
+
+@keyframes fadeInDown{
+    from{
+        transform: translateY(-20%);
+        opacity: 0;
+    }
+    to{
+        transform: none;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutUp{
+    from{
+        transform: none;
+        opacity: 1;
+    }
+    
+    to{
+        transform: translateY(-20%);
+        opacity: 0;
+    }
 }
 
 #submitBtn:not(.disabled).error{

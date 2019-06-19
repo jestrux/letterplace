@@ -14,6 +14,10 @@ class GameDetail extends React.Component {
     state = { showLastPlayedTiles: false, game: {}, savingGame: false, playedTiles: [], playedWord: '' }
 
     componentWillReceiveProps(newProps){
+        if(newProps.closingCurGame){
+            this.flipTileGrid(true);
+            return;
+        }
         if(!newProps.game)
             return;
 
@@ -31,6 +35,7 @@ class GameDetail extends React.Component {
                 this.setWord();
                 this.setScore();
                 this.showLastPlayedIfTurn(game);
+                this.flipTileGrid();
             });
         }
     }
@@ -162,6 +167,46 @@ class GameDetail extends React.Component {
                 to.classList.remove('animated-tile');
             })
         }, 10);
+    }
+    
+    flipTileGrid = (back) => {
+        if(!this.props.curGameImage)
+            return;
+
+        const from = this.props.curGameImage;
+        const to = document.querySelector('#gameTiles');
+        const fromBox = from.getBoundingClientRect();
+        const toBox = to.getBoundingClientRect();
+
+        let translateX = (fromBox.left + fromBox.width / 2) - (toBox.left + toBox.width / 2);
+        let translateY = (fromBox.top + fromBox.height / 2) - (toBox.top + toBox.height / 2);
+        let scaleX = fromBox.width / toBox.width;
+        let scaleY = fromBox.height / toBox.height;
+
+        const animatingClass = back ? "animating-back" : "animating-screens";
+        const translate = 'translate('+translateX + 'px, ' + translateY +'px)';
+        const scale = 'scale('+scaleX + ', ' + scaleY + ')';
+        const transform = translate + ' ' + scale;
+
+        if(!back)
+            to.style.transform = transform;
+        else
+            to.style.transform = 'none';
+
+        setTimeout(() => {
+            document.querySelector(".App").classList.add(animatingClass);
+            if(back)
+                to.style.transform = transform;
+            else
+                to.style.transform = 'none';
+
+            to.addEventListener('transitionend', () => {
+                document.querySelector(".App").classList.remove(animatingClass);
+                // if(back){
+                //     this.props.closeAnimationDone()
+                // }
+            })
+        });
     }
 
     submitPlayedWord = () => {
@@ -296,6 +341,7 @@ class GameDetail extends React.Component {
             <React.Fragment>
                 { game && game.players && 
                     <div id="GameDetail" className={showLastPlayedTiles ? 'show-last-played' : ''}>
+                        <div id="gameDetailBg"></div>
                         { !savingGame && <GameToolbar>{ header }</GameToolbar> }
 
                         <div id="gamePlayers" className={ !playing ? 'visible' : '' }>
