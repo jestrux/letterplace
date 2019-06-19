@@ -9,11 +9,12 @@
     "react": "16.8.4",
     "react-dom": "16.8.4",
     "react-scripts": "2.1.8",
+    "sw-precache-cra": "^1.0.0-alpha.2",
     "tinycolor2": "^1.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && sw-precache-cra --config sw-config.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
