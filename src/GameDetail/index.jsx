@@ -1,11 +1,10 @@
 import React from 'react';
-import _findIndex from 'lodash/findIndex';
 import _find from 'lodash/find';
 import './GameDetail.css';
 
 import GameToolbar from '../GameToolbar';
 import GameTile from './GameTile';
-import { getTilesImage } from '../LetterPlaceHelpers';
+import { getTilesImage, getTileBg, isSurrounded } from '../LetterPlaceHelpers';
 import { db } from '../data/firebase';
 import { sendTurnNotification, sendNewGameNotification } from '../data/methods';
 import Toast from '../Toast';
@@ -199,17 +198,18 @@ class GameDetail extends React.Component {
 
             game.tiles = game.tiles.map((tile, index) => {
                 if(playedTileIndexes.indexOf(index) !== -1){
-                    tile.played = true;
                     tile.lastplayed = true;
                     if(tile.locked){
-                        tile.locked = false;
-                    }else{
-                        tile.owner = game.turn;
+                        if(tile.owner !== game.turn)
+                            delete tile.locked;
                     }
-                }else{
-                    tile.lastplayed = false;
+                    else
+                        tile.owner = game.turn;
                 }
+                else if(tile.lastplayed)
+                    delete tile.lastplayed;
 
+                tile.locked = isSurrounded(game.tiles, index);
                 return tile;
             });
 
@@ -333,7 +333,7 @@ class GameDetail extends React.Component {
                                             tile={tile} 
                                             onClicked={ () => this.playTile(index, tile) }
                                             hidden={hidden}
-                                            background={ tile.owner === - 1 ? null : game.colors[tile.owner] } />
+                                            background={ tile.owner === - 1 ? null : getTileBg(game.colors[tile.owner], tile.locked) } />
                                     );
                                 })
                             }
