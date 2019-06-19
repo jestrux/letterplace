@@ -1,6 +1,6 @@
 #GameDetail{
     height: calc(100*var(--vh));
-    overflow: auto;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -162,14 +162,27 @@
     z-index: 1;
 }
 
+#GameDetail.show-last-played .GameTile:nth-child(even).last-played{
+    animation: wobbleCounter 1s;
+}
+
 @keyframes wobble{
-    from{
+    from, 33.333%, 66.666%{
         transform: rotate(-8deg);
     }
-    33.333%{
+    16.666%, 50%, 83.333%{
         transform: rotate(8deg);
     }
-    66.666%{
+    to{
+        transform: rotate(0);
+    }
+}
+
+@keyframes wobbleCounter{
+    from, 33.333%, 66.666%{
+        transform: rotate(8deg);
+    }
+    16.666%, 50%, 83.333%{
         transform: rotate(-8deg);
     }
     to{
