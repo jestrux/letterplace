@@ -7,6 +7,27 @@ export const themes = {
 	2 : ['#009688', '#ff9800']
 };
 
+export const getLoaderImage = function(){
+	var canvas = document.createElement("canvas");
+	var ctx = canvas.getContext("2d");
+	canvas.width = 30;
+	canvas.height = 30;
+	var space = 3.5;
+	var dotSize = (30 / 3) - (space / 3);
+	ctx.fillStyle = "#333";
+
+	for(var i = 0; i < 9; i++){
+		var x = (i % 3)*dotSize + (space * (i%3));
+		var y = Math.floor(i / 3)*dotSize + space;
+
+		if(i !== 1){
+			ctx.fillRect(x, y, dotSize - space, dotSize - space);
+		}
+	}
+
+	return canvas.toDataURL();
+}
+
 export const getTilesImage = function(tiles, colors){
 	var canvas = document.createElement("canvas");
 	var ctx = canvas.getContext("2d");
