@@ -4,11 +4,6 @@ import './GameListItem.css';
 const GameListItem = ( props ) => {
     const { game, user } = props;
 
-    // function _onTap(e){
-    //     var el = this.$.preview;
-    //     props.onTapped({el: el, item: this, game: this.game});
-    // }
-
     function _getTurnMessage(user, turn, players){
         if(players[turn].id === user.id)
             return "Your turn";
@@ -31,7 +26,7 @@ const GameListItem = ( props ) => {
         <div className={'GameListItem ' + (props.selected ? 'selected' : '')} 
             onClick={ props.onClicked }>
             <div>
-                <div id="preview" className="tiles-preview" style={{ backgroundImage: `url(${game.summary_image})` }}></div>
+                <div id="preview" className="tiles-preview" style={{ backgroundImage: `url(data:image/png;base64,${game.summary_image})` }}></div>
             </div>
             <div className="item-text">
                 <h3>
