@@ -43,7 +43,6 @@
     }
   ],
   "start_url": "./index.html",
-  "scope": "https://letterplace.herokuapp.com/*",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#FFFFFF",
