@@ -281,7 +281,9 @@ class GameDetail extends React.Component {
                 newTiles[index] = tile;
 
                 return tile;
-            })
+            });
+            game.player1.points = game.tiles.filter(t => t.owner === 0).length;
+            game.player2.points = game.tiles.filter(t => t.owner === 1).length;
 
             const turns = [game.turn, game.next];
             game.next = turns[0];
