@@ -42,7 +42,8 @@
       "type": "image/png"
     }
   ],
-  "start_url": "./index.html",
+  "start_url": "/",
+  "scope": "https://letterplace.herokuapp.com/*",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#FFFFFF",
