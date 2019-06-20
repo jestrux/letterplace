@@ -10,11 +10,14 @@ import { db } from '../data/firebase';
 import { sendTurnNotification, sendNewGameNotification } from '../data/methods';
 import Toast from '../Toast';
 
-let addedPoints = 0;
-let capturedPoints = 0;
-
 class GameDetail extends React.Component {
-    state = { showLastPlayedTiles: false, game: {}, savingGame: false, playedTiles: [], playedWord: '' }
+    state = { 
+        showLastPlayedTiles: false, 
+        game: {}, 
+        savingGame: false, playedTiles: [], playedWord: '',
+        addedPoints: 0,
+        capturedPoints: 0
+    }
 
     componentWillReceiveProps(newProps){
         if(newProps.closingCurGame){
@@ -118,15 +121,15 @@ class GameDetail extends React.Component {
         const otherUserIdx = curUserIdx === 0 ? 1 : 0;
         const otherUserTiles = this.state.playedTiles.filter(p => p.owner === otherUserIdx && !p.locked);
         const newTiles = this.state.playedTiles.filter(p => p.owner === -1);
-        addedPoints = otherUserTiles.length + newTiles.length;
-        capturedPoints = otherUserTiles.length;
+        const addedPoints = otherUserTiles.length + newTiles.length;
+        const capturedPoints = otherUserTiles.length;
 
         let players = _cloneDeep([game.player1, game.player2]);
         players[curUserIdx].points += addedPoints;
         players[otherUserIdx].points -= otherUserTiles.length;
         game.player1 = players[0];
         game.player2 = players[1];
-        this.setState({game});
+        this.setState({game, addedPoints, capturedPoints});
     }
     
     setWord = () => {
@@ -295,9 +298,10 @@ class GameDetail extends React.Component {
             });
     }
 
-    showScoreToast(game){
+    showScoreToast = (game) => {
         const reducedColor = game.colors[game.next];
         const addedColor = game.colors[game.turn];
+        const { capturedPoints, addedPoints } = this.state;
 
         var scoreToast = document.createElement('div');
         scoreToast.setAttribute("id", "scoreToast");
@@ -311,8 +315,7 @@ class GameDetail extends React.Component {
 
             setTimeout(() => {
                 scoreToast.remove();
-                addedPoints = 0;
-                capturedPoints = 0;
+                this.setState({addedPoints: 0, capturedPoints: 0});
             }, 500);
         }, 2500);
     }
