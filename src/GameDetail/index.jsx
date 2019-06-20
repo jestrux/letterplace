@@ -255,24 +255,32 @@ class GameDetail extends React.Component {
             var newTiles = game.tiles.map((tile, index) => {
                 if(playedTileIndexes.indexOf(index) !== -1){
                     tile.lastplayed = true;
-                    if(tile.locked){
-                        if(tile.owner !== game.turn)
-                            delete tile.locked;
-                    }
-                    else
+                    if(tile.locked)
                         tile.owner = game.turn;
+                    else if(tile.owner !== game.turn)
+                        delete tile.locked;
+
+                    tile.locked = isSurrounded(game.tiles, index);
                 }
                 else if(tile.lastplayed)
                     delete tile.lastplayed;
+
+                // update tiles for next pass
+                game.tiles[index] = tile;
                 return tile;
             });
             // finish updating tiles before setting locked states
-            game.tiles = newTiles.map((t, index) => {
-                var surrounded = isSurrounded(game.tiles, index);
-                if(surrounded && !t.lastplayed)
-                    t.locked = true;
+            game.tiles = newTiles.map((tile, index) => {
+                var surrounded = isSurrounded(newTiles, index);
+                if(surrounded && (!tile.lastplayed || tile.owner === game.turn))
+                    tile.locked = true;
+                else
+                    delete tile.locked;
                 
-                return t;
+                // update newTiles for next pass
+                newTiles[index] = tile;
+
+                return tile;
             })
 
             const turns = [game.turn, game.next];
