@@ -227,21 +227,30 @@
     position: fixed;
     top: 0;
     bottom: 5em;
-    left: 50%;
+    left: 0;
+    right: 0;
+    z-index: 100000;
+}
+
+#scoreToast > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 0 0.8em;
-    margin: auto;
-    transform: translateX(-50%);
     height: 60px;
     background: #fff;
     border-radius: 5px;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-    z-index: 100000;
 }
 
 #scoreToast span{
     font-weight: bold;
     font-size: 2em;
     margin: 0 0.3em;
+}
+
+#scoreToast.invisible > div{
+    animation: fallDownOut 0.4s forwards;
 }
 
 #savingGameLoader.visible #loaderIcon{

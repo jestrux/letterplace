@@ -301,9 +301,9 @@ class GameDetail extends React.Component {
 
         var scoreToast = document.createElement('div');
         scoreToast.setAttribute("id", "scoreToast");
-        scoreToast.classList.add("visible");
-        scoreToast.innerHTML = `<span style="color: ${reducedColor}">-${capturedPoints}</span> <span style="color: ${addedColor}">+${addedPoints}</span>`;
+        scoreToast.innerHTML = `<div><span style="color: ${reducedColor}">-${capturedPoints}</span> <span style="color: ${addedColor}">+${addedPoints}</span></div>`;
         document.querySelector("#GameDetail").appendChild(scoreToast);
+        scoreToast.classList.add("visible");
 
         setTimeout(() => {
             scoreToast.classList.remove("visible");
@@ -311,8 +311,10 @@ class GameDetail extends React.Component {
 
             setTimeout(() => {
                 scoreToast.remove();
+                addedPoints = 0;
+                capturedPoints = 0;
             }, 500);
-        }, 500);
+        }, 2500);
     }
 
     notifyOtherPlayer = async (game) => {
