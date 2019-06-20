@@ -265,7 +265,10 @@ class GameDetail extends React.Component {
             });
             // finish updating tiles before setting locked states
             game.tiles = newTiles.map((t, index) => {
-                t.locked = isSurrounded(game.tiles, index);
+                var surrounded = isSurrounded(game.tiles, index);
+                if(surrounded && !t.lastplayed)
+                    t.locked = true;
+                
                 return t;
             })
 
@@ -287,7 +290,7 @@ class GameDetail extends React.Component {
                 console.log("Game saved!");
                 await this.notifyOtherPlayer(game);
                 this.clearPlayedTiles();
-                this.showScoreToast(game);
+                this.showScoreToast(game, this.state.capturedPoints, this.state.addedPoints);
                 this.setState({savingGame: false}, () => {
                     this.props.onGameChanged(game);
                 });
@@ -298,10 +301,9 @@ class GameDetail extends React.Component {
             });
     }
 
-    showScoreToast = (game) => {
+    showScoreToast = (game, capturedPoints, addedPoints) => {
         const reducedColor = game.colors[game.next];
         const addedColor = game.colors[game.turn];
-        const { capturedPoints, addedPoints } = this.state;
 
         var scoreToast = document.createElement('div');
         scoreToast.setAttribute("id", "scoreToast");
