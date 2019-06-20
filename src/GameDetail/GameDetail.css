@@ -134,11 +134,11 @@
     transition: transform 0.2s ease-out;
 }
 
-.App.animating-back #GameDetail > *:not(#gameTiles):not(#savingGameLoader){
+.App.animating-back #GameDetail > *:not(#gameTiles):not(#savingGameLoader):not(#loaderIcon){
     animation: fadeOutUp 0.2s;
 }
 
-.App:not(.animating-back) #GameDetail > *:not(#gameTiles):not(#savingGameLoader){
+.App:not(.animating-back) #GameDetail > *:not(#gameTiles):not(#savingGameLoader):not(#loaderIcon){
     animation: fadeInDown 0.4s;
 }
 
@@ -189,6 +189,11 @@
     letter-spacing: 0.4em;
     font-size: 1.1em;
     font-weight: 500;
+}
+
+#savingGameLoader{
+    /* prevent loaderIcon from initially animating */
+    opacity: 0;
 }
 
 #savingGameLoader:not(.visble){

@@ -13,10 +13,12 @@ import Toast from '../Toast';
 class GameDetail extends React.Component {
     state = { 
         showLastPlayedTiles: false, 
-        game: {}, 
-        savingGame: false, playedTiles: [], playedWord: '',
-        addedPoints: 0,
-        capturedPoints: 0
+        game: null, 
+        savingGame: false, 
+        playedTiles: [], 
+        playedWord: '',
+        addedPoints: 5,
+        capturedPoints: 7
     }
 
     componentWillReceiveProps(newProps){
@@ -110,7 +112,7 @@ class GameDetail extends React.Component {
     
     setScore = () => {
         let { user, game } = this.props;
-        game = _cloneDeep(game);
+        game = game ? _cloneDeep(game) : _cloneDeep(this.props.game);
         const gamePlayers = game.players;
 
         if(!gamePlayers){
@@ -140,7 +142,7 @@ class GameDetail extends React.Component {
         this.setState({playedTiles: []}, () => {
             this.setWord();
 
-            if(!justTiles)
+            // if(!justTiles)
                 this.setScore();
         });
     }
@@ -282,18 +284,29 @@ class GameDetail extends React.Component {
         }
     }
 
+    setSavingLoader = (state) => {
+        if(state)
+            document.querySelector("#savingGameLoader").style.opacity = 1;
+        else
+            setTimeout(() => {
+                document.querySelector("#savingGameLoader").style.opacity = 0;
+            }, 400);
+        this.setState({savingGame: state});
+    }
+
     persistGame(game){
-        this.setState({savingGame: true});
+        const capturedPoints = this.state.capturedPoints;
+        const addedPoints = this.state.addedPoints;
+        this.setSavingLoader(true);
         const gameRef = db.doc('games/' + game.id);
         gameRef.set(game)
             .then(async () => {
                 console.log("Game saved!");
-                await this.notifyOtherPlayer(game);
+                this.showScoreToast(game, capturedPoints, addedPoints);
                 this.clearPlayedTiles();
-                this.showScoreToast(game, this.state.capturedPoints, this.state.addedPoints);
-                this.setState({savingGame: false}, () => {
-                    this.props.onGameChanged(game);
-                });
+                this.props.onGameChanged(game);
+                this.setSavingLoader(false);
+                this.notifyOtherPlayer(game);
             })
             .catch(() => {
                 this.clearPlayedTiles();
@@ -304,6 +317,8 @@ class GameDetail extends React.Component {
     showScoreToast = (game, capturedPoints, addedPoints) => {
         const reducedColor = game.colors[game.next];
         const addedColor = game.colors[game.turn];
+
+        console.log("Points: ", capturedPoints, addedPoints);
 
         var scoreToast = document.createElement('div');
         scoreToast.setAttribute("id", "scoreToast");
@@ -317,7 +332,6 @@ class GameDetail extends React.Component {
 
             setTimeout(() => {
                 scoreToast.remove();
-                this.setState({addedPoints: 0, capturedPoints: 0});
             }, 500);
         }, 2500);
     }
