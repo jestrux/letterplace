@@ -299,7 +299,11 @@ class GameDetail extends React.Component {
         const capturedPoints = this.state.capturedPoints;
         const addedPoints = this.state.addedPoints;
         const gameOver = game.player1.points + game.player2.points === 25;
-        game.over = true;
+        if(gameOver)
+            game.over = true;
+        else
+            delete game.over;
+            
         this.setSavingLoader(true);
         const gameRef = db.doc('games/' + game.id);
         gameRef.set(game)
