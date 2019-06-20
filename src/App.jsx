@@ -12,7 +12,7 @@ import GameDetail from './GameDetail';
 
 import { db, auth, messaging } from './data/firebase';
 import { compareValues } from './LetterPlaceHelpers';
-import { getGameById } from './data/methods';
+import { getGameById, showGameOverMessage } from './data/methods';
 
 export const AuthUser = React.createContext(null);
 
@@ -114,7 +114,11 @@ class App extends Component {
           if(changedGameIdx !== -1){
             games.splice(changedGameIdx, 1, game);
             games.sort(compareValues('updated_at', 'desc'));
-            this.setState({ games });
+            this.setState({ games }, () => {
+              if(game.over){
+                showGameOverMessage(game, this.state.user.id);
+              }
+            });
           }else{
             console.log("No game with that id mate!!");
           }

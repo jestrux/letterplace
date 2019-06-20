@@ -13,6 +13,17 @@ const isLocalhost = Boolean(
 
 const APP_URL = isLocalhost ? "http://localhost:3000" : "http://letterplace.herokuapp.com";
 
+export const showGameOverMessage = (game, userId) => {
+    const curUserIdx = game.players.indexOf(userId);
+    const otherPlayer = curUserIdx === 0 ? game.player2 : game.player1;
+    let winIndex = 0;
+    if(game.player2.points > game.player1.points)
+        winIndex = 1;
+    const winner = winIndex === curUserIdx ? "You" : otherPlayer.name;
+
+    alert(`Game Over! ${winner} won, final score: ${game.player1.points} - ${game.player2.points}`);
+}
+
 export const getGameById = function(gameId){
 	return new Promise(async (resolve, reject) => {
 		db.doc("games/" + gameId).get().then(doc => {

@@ -7,7 +7,7 @@ import GameToolbar from '../GameToolbar';
 import GameTile from './GameTile';
 import { getLoaderImage, getTilesImage, getTileBg, isSurrounded } from '../LetterPlaceHelpers';
 import { db } from '../data/firebase';
-import { sendTurnNotification, sendNewGameNotification } from '../data/methods';
+import { sendTurnNotification, sendNewGameNotification, showGameOverMessage } from '../data/methods';
 import Toast from '../Toast';
 
 class GameDetail extends React.Component {
@@ -42,8 +42,9 @@ class GameDetail extends React.Component {
             this.setState({game, playedTiles: []}, () => {
                 this.setWord();
                 this.setScore();
-                this.showLastPlayedIfTurn(game);
                 this.flipTileGrid();
+                if(!game.over)
+                    this.showLastPlayedIfTurn(game);
             });
         }
     }
@@ -297,15 +298,23 @@ class GameDetail extends React.Component {
     persistGame(game){
         const capturedPoints = this.state.capturedPoints;
         const addedPoints = this.state.addedPoints;
+        const gameOver = game.player1.points + game.player2.points === 25;
+        game.over = true;
         this.setSavingLoader(true);
         const gameRef = db.doc('games/' + game.id);
         gameRef.set(game)
             .then(async () => {
                 console.log("Game saved!");
-                this.showScoreToast(game, capturedPoints, addedPoints);
+                if(!gameOver)
+                    this.showScoreToast(game, capturedPoints, addedPoints);
+
                 this.clearPlayedTiles();
                 this.props.onGameChanged(game);
                 this.setSavingLoader(false);
+
+                if(gameOver)
+                    showGameOverMessage(game, this.props.user.id);
+
                 this.notifyOtherPlayer(game);
             })
             .catch(() => {
