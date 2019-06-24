@@ -331,8 +331,8 @@ class GameDetail extends React.Component {
     }
 
     showScoreToast = (game, capturedPoints, addedPoints) => {
-        const reducedColor = game.colors[game.next];
-        const addedColor = game.colors[game.turn];
+        const reducedColor = game.colors[game.turn];
+        const addedColor = game.colors[game.next];
 
         console.log("Points: ", capturedPoints, addedPoints);
 
