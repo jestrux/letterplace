@@ -41,11 +41,14 @@ class GameDetail extends React.Component {
 
     setupGame = (props) => {
         let { game } = props;
+        const stateGame = _cloneDeep(this.state.game);
+        const updatedFromNotfication = stateGame && stateGame.id === game.id;
         if(game && game.players){
             this.setState({game, playedTiles: []}, () => {
                 this.setWord();
                 this.setScore();
-                this.flipTileGrid();
+                if(!updatedFromNotfication)
+                    this.flipTileGrid();
                 if(!game.over)
                     this.showLastPlayedIfTurn(game);
             });
