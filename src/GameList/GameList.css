@@ -9,6 +9,7 @@
     display: block;
     text-align: center;
     background-color: #efffdc;
+    color: #618439;
     border: 0 solid #c5fd87;
     border-width: 1px;
     display: flex;
@@ -16,7 +17,6 @@
     justify-content: center;
     font-size: 0.9em;
     letter-spacing: 0.1em;
-    color: #618439;
 }
 
 #root:not(.update-available) #gameUpdater{
