@@ -63,7 +63,7 @@ const GameList = ( props ) => {
 
     let newGameMessage = null;
     if(games && games.length && newGameIndex !== -1)
-      newGameMessage = `New game received from <strong>${games[newGameIndex].players[0].name}</strong>`;
+      newGameMessage = `New game received from <strong>${games[newGameIndex].player1.name}</strong>`;
 
     return (
         <React.Fragment>
