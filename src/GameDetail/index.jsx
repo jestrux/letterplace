@@ -97,6 +97,15 @@ class GameDetail extends React.Component {
         const clonedTile = _cloneDeep(tile);
         const gameTiles = document.querySelectorAll('#gameTiles .GameTile');
         const fromTile = gameTiles[index];
+        if(this.state.game && this.state.game.over){
+            fromTile.classList.remove("wobble");
+            setTimeout(() => {
+                fromTile.classList.add("wobble");
+                fromTile.addEventListener("webkitAnimationEnd", () => fromTile.classList.remove("wobble"));
+                fromTile.addEventListener("animationend", () => fromTile.classList.remove("wobble"));
+            }, 10);
+            return;
+        }
 
         clonedTile.original_index = index;
         this.setState({playedTiles: [...this.state.playedTiles, clonedTile]}, () => {
@@ -407,7 +416,10 @@ class GameDetail extends React.Component {
         return ( 
             <React.Fragment>
                 { game && game.players && 
-                    <div id="GameDetail" className={showLastPlayedTiles ? 'show-last-played' : ''}>
+                    <div id="GameDetail" className={
+                        (showLastPlayedTiles ? 'show-last-played' : '') +
+                        (game.over ? ' game-over' : '')
+                    }>
                         <div id="gameDetailBg"></div>
 
                         <GameToolbar>{ header }</GameToolbar>

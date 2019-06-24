@@ -87,6 +87,10 @@
     border-radius: 3px;
 }
 
+.game-over .game-player span:after{
+    display: none;
+}
+
 .game-player:not(.current) span:after,
 #gamePlayers:not(.visible) .game-player span:after{
     opacity: 0;
@@ -318,13 +322,17 @@
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
     outline: 1px solid transparent;
+}
 
+#GameDetail.show-last-played .GameTile.last-played,
+.GameTile.wobble{
     animation: wobble 1s;
     z-index: 1;
 }
 
-#GameDetail.show-last-played .GameTile:nth-child(even).last-played{
-    animation: wobbleCounter 1s;
+#GameDetail.show-last-played .GameTile:nth-child(even).last-played,
+.GameTile:nth-child(even).wobble{
+    animation: wobbleInverted 1s;
 }
 
 @keyframes wobble{
@@ -339,7 +347,7 @@
     }
 }
 
-@keyframes wobbleCounter{
+@keyframes wobbleInverted{
     from, 33.333%, 66.666%{
         transform: rotate(8deg);
     }
