@@ -104,13 +104,17 @@ class App extends Component {
         const gameId = message.data.gameId;
         try {
           const games = this.state.games;
+          const curGameIndex = this.state.cur_game;
+          const curGameId = games[curGameIndex].id;
+
           const game = await getGameById(gameId);
           const changedGameIdx = _findIndex(games, ['id', game.id]);
 
           if(changedGameIdx !== -1){
             games.splice(changedGameIdx, 1, game);
             games.sort(compareValues('updated_at', 'desc'));
-            this.setState({ games }, () => {
+            const cur_game = games.findIndex(curGameId);
+            this.setState({ games, cur_game }, () => {
               if(game.over){
                 showGameOverMessage(game, this.state.user.id);
               }
@@ -127,12 +131,15 @@ class App extends Component {
         const gameId = message.data.gameId;
         try {
           const games = this.state.games;
+          const curGameIndex = this.state.cur_game;
+          const curGameId = games[curGameIndex].id;
           const newGame = await getGameById(gameId);
           games.push(newGame);
           games.sort(compareValues('updated_at', 'desc'));
-
+          
           const newGameIndex = _findIndex(games, ['id', gameId]);
-          this.setState({games, newGameIndex}, () => {
+          const cur_game = games.findIndex(curGameId);
+          this.setState({ games, cur_game, newGameIndex}, () => {
             setTimeout(() => {
               this.setState({newGameIndex: -1})
             }, 1000);
