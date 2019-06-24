@@ -17,6 +17,7 @@
     justify-content: center;
     font-size: 0.9em;
     letter-spacing: 0.1em;
+    outline: none;
 }
 
 #root:not(.update-available) #gameUpdater{
