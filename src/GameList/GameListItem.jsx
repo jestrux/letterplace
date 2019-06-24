@@ -4,22 +4,38 @@ import './GameListItem.css';
 const GameListItem = ( props ) => {
     const { game, user } = props;
 
-    function _getTurnMessage(user, turn, players){
-        if(players[turn].id === user.id)
+    function _getTurnMessage(gameOver, user, turn, players){
+        if(gameOver)
+            return "Game Over";
+        else if(players[turn].id === user.id)
             return "Your turn";
         else
             return players[turn].name + "'s turn";
     }
 
-    function _getLastPlayedMessage(user, next, players, lastword){
-        if(players[next].id === user.id)
-            return "You played " + lastword.toUpperCase();
-        else	
-            return players[next].name + " played " + lastword.toUpperCase();
+    function _getLastPlayedMessage(gameOver, user, next, players, lastword){
+        const otherPlayerIdx = players.findIndex(id => id !== user.id);
+        const otherPlayer = players[otherPlayerIdx].name;
+        
+        if(gameOver){
+            const curPlayerIdx = players.findIndex(id => id !== user.id);
+            const curPlayerWon = players[curPlayerIdx].points > players[otherPlayerIdx].points;
+            const score = players[0].points + " - " + players[1].points;
+            if(curPlayerWon)
+                return "You played " + lastword.toUpperCase() + " to win " + score;
+            else
+                return otherPlayer + " played " + lastword.toUpperCase() + ", you lost " + score;
+        }
+        else{
+            if(players[next].id === user.id)
+                return "You played " + lastword.toUpperCase();
+            else	
+                return otherPlayer + " played " + lastword.toUpperCase();
+        }
     }
 
-    function _showTagline(word){
-        return (word && word.length > 0) ? "" : "none";
+    function _showTagline(lastWord){
+        return (lastWord && lastWord.length > 0) ? "" : "none";
     }
 
     return (
@@ -30,15 +46,17 @@ const GameListItem = ( props ) => {
             </div>
             <div className="item-text">
                 <h3>
-                    {_getTurnMessage(user, game.turn, [game.player1, game.player2])}
+                    {_getTurnMessage(game.over, user, game.turn, [game.player1, game.player2])}
                 </h3>
                 <p style={{ display: _showTagline(game.lastword) }}>
-                    {_getLastPlayedMessage(user, game.next, [game.player1, game.player2], game.lastword)}
+                    {_getLastPlayedMessage(game.over, user, game.next, [game.player1, game.player2], game.lastword)}
                 </p>
             </div>
-            <div className="item-secondary">
-                {game.player1.points} - {game.player2.points}
-            </div>
+            { !game.over &&
+                <div className="item-secondary">
+                    {game.player1.points} - {game.player2.points}
+                </div>
+            }
         </div>
     );
 }

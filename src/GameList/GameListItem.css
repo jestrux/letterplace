@@ -64,7 +64,7 @@
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    max-width: calc(100% - 115px);
+    flex: 1;
 }
 .GameListItem[long] .item-text{
     display: none;
@@ -86,6 +86,7 @@
 }
 .item-secondary{
     margin-left: auto;
+    flex-shrink: 0;
 }
 .GameListItem[long] .item-secondary{
     margin-top: 10px;
