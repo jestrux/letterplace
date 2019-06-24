@@ -206,10 +206,11 @@ class App extends Component {
     this.setState({ games });
   }
 
-  handleViewGame = async ( idx, image ) => {
-    var id = this.state.games[idx].id;
+  handleViewGame = async (game) => {
+    const id = game.id;
+    const idString = "GameListItem"+id;
+    const image = document.querySelector(`#${idString} #preview`);
     window.history.pushState({page: 'game-detail', gameId: id}, 'View Game ' + id, '#view/'+id);
-
     this.setState({cur_page: 'game-detail', cur_game: id, curGameImage: image});
   }
 
