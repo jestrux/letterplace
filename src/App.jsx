@@ -268,7 +268,7 @@ class App extends Component {
                 { cur_page === 'new-game' && 
                   <NewGame 
                     onClose={ this.handleGoHome } 
-                    onStartGame={ this.handleGameCreated } 
+                    onGameCreated={ this.handleGameCreated } 
                   /> 
                 }
             </div>
