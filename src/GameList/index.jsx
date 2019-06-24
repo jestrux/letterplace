@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 
 import GameToolbar from '../GameToolbar';
 import GameListItem from './GameListItem';
-import NewGame from '../NewGame';
 import { messaging } from '../data/firebase';
 import { AuthUser } from '../App';
 import Toast from '../Toast';
@@ -13,7 +12,7 @@ import logo from '../logo.png';
 
 const GameList = ( props ) => { 
     const authUser = useContext(AuthUser);
-    const { games, user, loading, newGameIndex } = props;
+    const { games, user, loading, newGameId } = props;
     const [ notificationsAllowed, setNotificationsAllowed ] = useState("Notification" in window && Notification.permission === 'granted');
     const onGoingGames = games.filter(g => !g.over);
     const completedGames = games.filter(g => g.over);
@@ -58,8 +57,10 @@ const GameList = ( props ) => {
     );
 
     let newGameMessage = null;
-    if(games && games.length && newGameIndex !== -1)
-      newGameMessage = `New game received from <strong>${games[newGameIndex].player1.name}</strong>`;
+    if(games && games.length && newGameId !== null){
+        const newGame = games.find(g => g.id === newGameId);
+        newGameMessage = `New game received from <strong>${newGame.player1.name}</strong>`;
+    }
 
     return (
         <React.Fragment>
@@ -107,7 +108,7 @@ const GameList = ( props ) => {
                 }
 
                 { onGoingGames.map( (game, index) => (
-                        <GameListItem selected={props.currentGame === index} onClicked={ ( image ) => handleGameClicked(index, image) } key={ game.id } game={game} user={user} />
+                        <GameListItem selected={props.currentGame === game.id } onClicked={ ( image ) => handleGameClicked(index, image) } key={ game.id } game={game} user={user} />
                     ))
                 }
                 
@@ -116,7 +117,7 @@ const GameList = ( props ) => {
                         <h5 id="completedGamesTitle">Completed Games</h5>
                         {
                             completedGames.map( (game, index) => (
-                                <GameListItem selected={props.currentGame === index} onClicked={ ( image ) => handleGameClicked(index, image) } key={ game.id } game={game} user={user} />
+                                <GameListItem selected={props.currentGame === game.id } onClicked={ ( image ) => handleGameClicked(index, image) } key={ game.id } game={game} user={user} />
                             ))
                         }
                     </React.Fragment>

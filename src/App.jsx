@@ -26,12 +26,12 @@ class App extends Component {
     games: [],
     fetchingGames: false, 
     cur_page: 'game-list', 
-    cur_game: 0, 
+    cur_game: null, 
     curGameImage: null,
     closingCurGame: false,
     sessionUserFetched: false,
     sessionUser: null,
-    newGameIndex: -1
+    newGameId: null
   };
 
   componentWillMount(){
@@ -63,9 +63,7 @@ class App extends Component {
       const { page, gameId } = state;
       console.log("State found", page, gameId);
       if(gameId && gameId.length){
-        const cur_game = _findIndex(this.state.games, ['id', gameId]);
-        if(cur_game === -1)
-          return;
+        const cur_game = gameId;
 
         this.setState({cur_page: page, cur_game}, () => {
           const { cur_game, cur_page } = this.state;
@@ -77,10 +75,8 @@ class App extends Component {
     }
     else if(hash && hash.indexOf('view') !== -1){
       const gameId = hash.replace("#view/", "");
-      const cur_game = _findIndex(this.state.games, ['id', gameId]);
+      const cur_game = gameId;
       console.log("Hash found: ", gameId);
-      if(cur_game === -1)
-        return;
         
       this.setState({cur_page: "game-detail", cur_game}, () => {
         const { cur_game, cur_page } = this.state;
@@ -103,25 +99,19 @@ class App extends Component {
       if(hasData && message.data.action === "game-changed"){
         const gameId = message.data.gameId;
         try {
-          const games = this.state.games;
-          const curGameIndex = this.state.cur_game;
-          const curGameId = games[curGameIndex].id;
-
           const game = await getGameById(gameId);
-          const changedGameIdx = _findIndex(games, ['id', game.id]);
-
-          if(changedGameIdx !== -1){
-            games.splice(changedGameIdx, 1, game);
-            games.sort(compareValues('updated_at', 'desc'));
-            const cur_game = games.findIndex(curGameId);
-            this.setState({ games, cur_game }, () => {
-              if(game.over){
-                showGameOverMessage(game, this.state.user.id);
-              }
-            });
-          }else{
-            console.log("No game with that id mate!!");
-          }
+          let games = this.state.games.map(g => {
+            if(g.id === gameId)
+              return game;
+            
+            return g;
+          });
+          games.sort(compareValues('updated_at', 'desc'));
+          this.setState({ games }, () => {
+            if(game.over){
+              showGameOverMessage(game, this.state.user.id);
+            }
+          });
         } catch (error) {
           console.log("Failed to fetch game", error);
         }
@@ -130,18 +120,15 @@ class App extends Component {
       if(hasData && message.data.action === "new-game"){
         const gameId = message.data.gameId;
         try {
-          const games = this.state.games;
-          const curGameIndex = this.state.cur_game;
-          const curGameId = games[curGameIndex].id;
           const newGame = await getGameById(gameId);
+          let games = this.state.games;
           games.push(newGame);
           games.sort(compareValues('updated_at', 'desc'));
           
-          const newGameIndex = _findIndex(games, ['id', gameId]);
-          const cur_game = games.findIndex(curGameId);
-          this.setState({ games, cur_game, newGameIndex}, () => {
+          const newGameId = gameId;
+          this.setState({ games, newGameId}, () => {
             setTimeout(() => {
-              this.setState({newGameIndex: -1})
+              this.setState({newGameId: null})
             }, 1000);
           });
         } 
@@ -209,8 +196,12 @@ class App extends Component {
   }
   
   handleGameChanged = (game) => {
-    let games = this.state.games;
-    games[this.state.cur_game] = game;
+    const games = this.state.games.map(g => {
+      if(g.id === this.state.cur_game)
+        return game;
+
+      return g;
+    });
 
     this.setState({ games });
   }
@@ -219,7 +210,7 @@ class App extends Component {
     var id = this.state.games[idx].id;
     window.history.pushState({page: 'game-detail', gameId: id}, 'View Game ' + id, '#view/'+id);
 
-    this.setState({cur_page: 'game-detail', cur_game: idx, curGameImage: image});
+    this.setState({cur_page: 'game-detail', cur_game: id, curGameImage: image});
   }
 
   handleCreateGame = () => {
@@ -230,13 +221,13 @@ class App extends Component {
   handleGameCreated = (game) => {
     this.setState({ 
       games: [ game, ...this.state.games ], 
-      cur_game: 0,
+      cur_game: game.id,
       cur_page: 'game-detail'
     });
   }
   
   render() {
-    const { sessionUserFetched, sessionUser, user, games, fetchingGames, cur_page, cur_game, newGameIndex } = this.state;
+    const { sessionUserFetched, sessionUser, user, games, fetchingGames, cur_page, cur_game, newGameId } = this.state;
     const loadingLocalUser = sessionUserFetched && sessionUser && !user;
     
     return (
@@ -257,7 +248,7 @@ class App extends Component {
                 currentGame={cur_game}
                 games={games} 
                 loading={fetchingGames}
-                newGameIndex={newGameIndex}
+                newGameId={newGameId}
                 onCreateGame={ this.handleCreateGame }
                 onViewGame={(idx, image) => this.handleViewGame(idx, image) }
                 onRefreshGames={ this.fetchUserGames }
@@ -266,7 +257,7 @@ class App extends Component {
               { (cur_page === 'game-detail' || window.innerWidth > 800) && games.length > 0 && 
                 <GameDetail
                   user={user} 
-                  game={games[cur_game]}
+                  game={games.find(g => g.id === cur_game)}
                   curGameImage={this.state.curGameImage}
                   closingCurGame={this.state.closingCurGame}
                   onGoHome={ this.handleGoHome }
