@@ -55,7 +55,7 @@
 .new-game-tiles{
     padding-top: 1.7em;
     position: relative;
-    margin-bottom: 4em;
+    margin-bottom: 8em;
 }
 
 .new-game-tiles > button{
@@ -73,7 +73,8 @@
 .new-game-item label{
     color: #606060;
     display: block;
-    transform: translateY(-10px);
+    margin-top: -10px;
+    margin-bottom: 10px;
 }
 
 .theme-item{
