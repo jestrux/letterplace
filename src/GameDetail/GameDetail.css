@@ -23,6 +23,7 @@
 }
 
 #gamePlayers{
+    pointer-events: none;
     align-items: flex-start;
     justify-content: center;
     align-items: center;
@@ -42,6 +43,7 @@
     color: #a77;
     border-color: currentColor;
     position: relative;
+    pointer-events: auto;
 }
 
 .game-player img{

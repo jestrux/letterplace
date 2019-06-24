@@ -268,8 +268,9 @@ class GameDetail extends React.Component {
             });
             // set lock state after played tiles have been set
             game.tiles = newTiles.map((tile, index) => {
-                var surrounded = isSurrounded(newTiles, index);
-                if(surrounded && (!tile.lastplayed || tile.owner === game.turn))
+                const tileIsSurrounded = isSurrounded(newTiles, index);
+                const tileCanBeLocked = !tile.lastplayed || tile.owner === game.turn;
+                if(tileCanBeLocked && tileIsSurrounded)
                     tile.locked = true;
                 else
                     delete tile.locked;
