@@ -70,6 +70,7 @@ function registerValidSW(swUrl, config) {
                 'SW Log: New content is available and will be used when all ' +
                   'tabs for this page are closed. See http://bit.ly/CRA-PWA.'
               );
+              document.querySelector("#root").classList.add("update-available");
 
               // Execute callback
               if (config && config.onUpdate) {

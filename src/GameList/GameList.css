@@ -1,3 +1,7 @@
+#root:not(.update-available) #gameUpdater{
+    display: none;
+}
+
 #GameList {
     padding-top: 60px;
     height: 100vh;
