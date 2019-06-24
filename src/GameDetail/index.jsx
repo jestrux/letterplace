@@ -24,6 +24,9 @@ class GameDetail extends React.Component {
     componentWillReceiveProps(newProps){
         if(newProps.closingCurGame){
             this.flipTileGrid(true);
+            if(this.props.game && !this.props.game.began && this.state.game && !this.state.game.began){
+                db.doc('games/' + this.props.game.id).delete();
+            }
             return;
         }
         if(!newProps.game)
