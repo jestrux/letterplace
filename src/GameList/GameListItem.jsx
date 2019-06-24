@@ -38,9 +38,18 @@ const GameListItem = ( props ) => {
         return (lastWord && lastWord.length > 0) ? "" : "none";
     }
 
+    function handleGameClicked(e){
+        const el = e.currentTarget;
+        el.style.opacity = 0;
+        setTimeout(() => {
+            el.style.opacity = 1;
+        }, 300);
+        props.onClicked();
+    }
+
     return (
         <div id={'GameListItem' + game.id} className={'GameListItem ' + (props.selected ? 'selected' : '')} 
-            onClick={ props.onClicked }>
+            onClick={ handleGameClicked }>
             <div>
                 <div id="preview" className="tiles-preview" style={{ backgroundImage: `url(data:image/png;base64,${game.summary_image})` }}></div>
             </div>
