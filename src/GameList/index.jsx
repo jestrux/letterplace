@@ -1,7 +1,4 @@
 import React, { useState, useContext } from 'react';
-import './GameList.css';
-import logo from '../logo.png';
-
 
 import GameToolbar from '../GameToolbar';
 import GameListItem from './GameListItem';
@@ -11,10 +8,13 @@ import { AuthUser } from '../App';
 import Toast from '../Toast';
 import { setUserFcmToken } from '../data/methods';
 
+import './GameList.css';
+import logo from '../logo.png';
+
 const GameList = ( props ) => { 
     const authUser = useContext(AuthUser);
     const { games, user, loading, newGameIndex } = props;
-    const [ startingGame, setStartingGame ] = useState(false);
+    const [ creatingGame, setCreatingGame ] = useState(false);
     const [ notificationsAllowed, setNotificationsAllowed ] = useState("Notification" in window && Notification.permission === 'granted');
 
     function handleGameClicked(index){
@@ -23,11 +23,6 @@ const GameList = ( props ) => {
         const image = items[index + 1].querySelector('#preview');
 
         props.onViewGame(index, image);
-    }
-
-    function handleStartGame(game) {
-        setStartingGame(false);
-        props.onStartGame(game);
     }
 
     function allowNotifications(){
@@ -68,9 +63,9 @@ const GameList = ( props ) => {
     return (
         <React.Fragment>
             <div id="GameList">
-                { !startingGame &&  <GameToolbar>{ header }</GameToolbar> }
+                { !creatingGame &&  <GameToolbar>{ header }</GameToolbar> }
 
-                <div className="GameListItem" onClick={() => setStartingGame(true)}>
+                <div className="GameListItem" onClick={props.onCreateGame}>
                     <div id="preview" className="tiles-preview">
                         <svg fill="#888" width="30px" height="30px" viewBox="0 0 42 42" style={{enableBackground:'new 0 0 42 42'}}><path d="M37.059,16H26V4.941C26,2.224,23.718,0,21,0s-5,2.224-5,4.941V16H4.941C2.224,16,0,18.282,0,21s2.224,5,4.941,5H16v11.059 C16,39.776,18.282,42,21,42s5-2.224,5-4.941V26h11.059C39.776,26,42,23.718,42,21S39.776,16,37.059,16z"/></svg>
                     </div>
@@ -120,8 +115,6 @@ const GameList = ( props ) => {
                     UPDATE GAME
                 </button>
             </div>
-
-            { startingGame && <NewGame onClose={() => setStartingGame(false) } onStartGame={ handleStartGame } /> }
         </React.Fragment>
     );
 }

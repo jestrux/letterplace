@@ -20,6 +20,11 @@ const NewGame = ( props ) => {
     const [ tiles, setTiles ] = useState([]);
 
     useEffect(() => {
+        handleBackPress();
+        rollTiles();
+    }, []);
+
+    function handleBackPress(){
         EM.on('back-pressed', () => {
             console.log("Picking opponent: ", pickingOpponent);
             if(pickingOpponent)
@@ -27,9 +32,7 @@ const NewGame = ( props ) => {
             else
                 props.onClose();
         });
-        rollTiles();
-        console.log("New game mounted");
-    }, []);
+    }
     
     function rollTiles(){
         const letters = generateRandomLeters();

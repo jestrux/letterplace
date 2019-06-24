@@ -4,6 +4,7 @@
 
 import React, { Component } from 'react';
 import _findIndex from 'lodash/findIndex';
+import EventEmitter from 'EventEmitter';
 import './App.css';
 
 import Login from './Login';
@@ -13,8 +14,11 @@ import GameDetail from './GameDetail';
 import { db, auth, messaging } from './data/firebase';
 import { compareValues } from './LetterPlaceHelpers';
 import { getGameById, showGameOverMessage } from './data/methods';
+import NewGame from './NewGame';
 
 export const AuthUser = React.createContext(null);
+
+export const EM = new EventEmitter();
 
 class App extends Component {
   state = {  
@@ -46,7 +50,8 @@ class App extends Component {
     this.setPageFromUrl();
 
     window.onpopstate = () => {
-      console.log("Back pressed");
+      console.log();
+      EM.emit('back-pressed');
       this.setPageFromUrl();
     }
   }
@@ -89,15 +94,6 @@ class App extends Component {
       else
         this.setState({cur_page: 'game-list'});
     }
-  }
-
-  closeDetailPage = () => {
-    this.setState({closingCurGame: true}, () => {
-      setTimeout(() => {
-        this.setState({cur_page: 'game-list', curGameImage: null, closingCurGame: false});
-        document.querySelector(".App").classList.remove("animating-back", "animating-screens");
-      }, 200);
-    });
   }
   
   listenForFcmNotifications = () => {
@@ -188,12 +184,21 @@ class App extends Component {
   
   handleGoHome = () => {
     const { state } = window.history;
-    if(state && state.gameId && state.gameId.length)
+    if(state && (state.newGame || (state.gameId && state.gameId.length)))
       window.history.back();
     else if(this.state.curGameImage !== null)
       this.closeDetailPage();
     else
       this.setState({ cur_page: 'game-list', cur_game: null, curGameImage: null});
+  }
+
+  closeDetailPage = () => {
+    this.setState({closingCurGame: true}, () => {
+      setTimeout(() => {
+        this.setState({cur_page: 'game-list', curGameImage: null, closingCurGame: false});
+        document.querySelector(".App").classList.remove("animating-back", "animating-screens");
+      }, 200);
+    });
   }
   
   handleGameChanged = (game) => {
@@ -210,7 +215,12 @@ class App extends Component {
     this.setState({cur_page: 'game-detail', cur_game: idx, curGameImage: image});
   }
 
-  handleStartGame = (game) => {
+  handleCreateGame = () => {
+    window.history.pushState({page: 'new-game', newGame: true}, 'New Game ', '#newGame/');
+    this.setState({cur_page: 'new-game'});
+  }
+  
+  handleGameCreated = (game) => {
     this.setState({ 
       games: [ game, ...this.state.games ], 
       cur_game: 0,
@@ -241,7 +251,7 @@ class App extends Component {
                 games={games} 
                 loading={fetchingGames}
                 newGameIndex={newGameIndex}
-                onStartGame={ this.handleStartGame }
+                onCreateGame={ this.handleCreateGame }
                 onViewGame={(idx, image) => this.handleViewGame(idx, image) }
                 onRefreshGames={ this.fetchUserGames }
                 onLogout={this.handleLogout}/>
@@ -254,6 +264,13 @@ class App extends Component {
                   closingCurGame={this.state.closingCurGame}
                   onGoHome={ this.handleGoHome }
                   onGameChanged={ this.handleGameChanged } />}
+                  
+                { cur_page === 'new-game' && 
+                  <NewGame 
+                    onClose={ this.handleGoHome } 
+                    onStartGame={ this.handleGameCreated } 
+                  /> 
+                }
             </div>
           }
         </React.Fragment>
