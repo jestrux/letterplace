@@ -48,6 +48,13 @@
     background: transparent;
 }
 
+#completedGamesTitle{
+    margin-bottom: 0.3em;
+    margin-left: 0.7em;
+    font-size: 1.2em;
+    font-weight: 400;
+}
+
 @media all and (max-width: 800px){
     #GameList{
         max-width: 100vw;

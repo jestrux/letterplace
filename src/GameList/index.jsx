@@ -14,8 +14,9 @@ import logo from '../logo.png';
 const GameList = ( props ) => { 
     const authUser = useContext(AuthUser);
     const { games, user, loading, newGameIndex } = props;
-    const [ creatingGame, setCreatingGame ] = useState(false);
     const [ notificationsAllowed, setNotificationsAllowed ] = useState("Notification" in window && Notification.permission === 'granted');
+    const onGoingGames = games.filter(g => !g.over);
+    const completedGames = games.filter(g => g.over);
 
     function handleGameClicked(index){
         const list = document.querySelector('#GameList')
@@ -63,7 +64,7 @@ const GameList = ( props ) => {
     return (
         <React.Fragment>
             <div id="GameList">
-                { !creatingGame &&  <GameToolbar>{ header }</GameToolbar> }
+                <GameToolbar>{ header }</GameToolbar>
 
                 <div className="GameListItem" onClick={props.onCreateGame}>
                     <div id="preview" className="tiles-preview">
@@ -105,9 +106,20 @@ const GameList = ( props ) => {
                     loading && <p className="text-center">Fetching your games....</p>
                 }
 
-                { games.map( (game, index) => (
+                { onGoingGames.map( (game, index) => (
                         <GameListItem selected={props.currentGame === index} onClicked={ ( image ) => handleGameClicked(index, image) } key={ game.id } game={game} user={user} />
                     ))
+                }
+                
+                { completedGames && completedGames.length > 0 &&
+                    <React.Fragment>
+                        <h5 id="completedGamesTitle">Completed Games</h5>
+                        {
+                            completedGames.map( (game, index) => (
+                                <GameListItem selected={props.currentGame === index} onClicked={ ( image ) => handleGameClicked(index, image) } key={ game.id } game={game} user={user} />
+                            ))
+                        }
+                    </React.Fragment>
                 }
 
                 <button id="gameUpdater" style={ { marginRight: '1.1em' } } 
