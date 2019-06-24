@@ -255,35 +255,29 @@ class GameDetail extends React.Component {
             var newTiles = game.tiles.map((tile, index) => {
                 if(playedTileIndexes.indexOf(index) !== -1){
                     tile.lastplayed = true;
-                    if(tile.locked)
+                    if(!tile.locked)
                         tile.owner = game.turn;
-                    else if(tile.owner !== game.turn)
-                        delete tile.locked;
-
-                    tile.locked = isSurrounded(game.tiles, index);
                 }
                 else if(tile.lastplayed)
                     delete tile.lastplayed;
 
-                // update tiles for next pass
-                game.tiles[index] = tile;
                 return tile;
             });
-            // finish updating tiles before setting locked states
+            // set lock state after played tiles have been set
             game.tiles = newTiles.map((tile, index) => {
                 var surrounded = isSurrounded(newTiles, index);
                 if(surrounded && (!tile.lastplayed || tile.owner === game.turn))
                     tile.locked = true;
                 else
                     delete tile.locked;
-                
-                // update newTiles for next pass
-                newTiles[index] = tile;
 
                 return tile;
             });
             game.player1.points = game.tiles.filter(t => t.owner === 0).length;
             game.player2.points = game.tiles.filter(t => t.owner === 1).length;
+            // only add game over field if game is over
+            if(game.tiles.filter(t => t.owner === -1).length === 0)
+                game.over = true;
 
             const turns = [game.turn, game.next];
             game.next = turns[0];
@@ -308,25 +302,20 @@ class GameDetail extends React.Component {
     persistGame(game){
         const capturedPoints = this.state.capturedPoints;
         const addedPoints = this.state.addedPoints;
-        const gameOver = game.player1.points + game.player2.points === 25;
-        if(gameOver)
-            game.over = true;
-        else
-            delete game.over;
             
         this.setSavingLoader(true);
         const gameRef = db.doc('games/' + game.id);
         gameRef.set(game)
             .then(async () => {
                 console.log("Game saved!");
-                if(!gameOver)
+                if(!game.over)
                     this.showScoreToast(game, capturedPoints, addedPoints);
 
                 this.clearPlayedTiles();
                 this.props.onGameChanged(game);
                 this.setSavingLoader(false);
 
-                if(gameOver)
+                if(game.over)
                     showGameOverMessage(game, this.props.user.id);
 
                 this.notifyOtherPlayer(game);
