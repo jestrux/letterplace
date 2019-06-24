@@ -1,12 +1,14 @@
-import React, { useState, useContext} from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 
 import { db } from '../data/firebase'
 import GameToolbar from '../GameToolbar';
+import TileGrid from '../TileGrid';
 import PickOpponent from './PickOpponent';
 import './styles.css';
 
 import { themes, sampleGame, getTilesImage } from '../LetterPlaceHelpers'
 import { AuthUser } from '../App';
+import generateRandomLeters from '../RandomLetters';
 
 const NewGame = ( props ) => {
     const authUser = useContext(AuthUser);
@@ -15,6 +17,17 @@ const NewGame = ( props ) => {
     const [ pickingOpponent, setPickingOpponent ] = useState(false);
     const [ themeIndex, setThemeIndex ] = useState(0);
     const [ points, setPoints ] = useState(5);
+    const [ tiles, setTiles ] = useState([]);
+
+    useEffect(() => {
+        rollTiles();
+    }, []);
+    
+    function rollTiles(){
+        const letters = generateRandomLeters();
+        const tiles = letters.map(letter => ({owner: -1, letter}));
+        setTiles(tiles);
+    }
     
     function rollTheme(){
         const choices = [...Object.keys(themes)];
@@ -38,9 +51,10 @@ const NewGame = ( props ) => {
             players: [ id, opponent.id ],
             player1: { id, name: username, dp, points: 0 },
             player2: { ...opponent, points: 0 },
+            tiles,
             colors: themes[themeIndex],
             stakes: points,
-            summary_image: getTilesImage(newgame.tiles, themes[themeIndex])
+            summary_image: getTilesImage(tiles, themes[themeIndex])
         };
 
         persistGame(ref, newgame);
@@ -75,7 +89,7 @@ const NewGame = ( props ) => {
                     <div className="new-game-item">
                         <label>Opponent</label>
                         <div onClick={() => setPickingOpponent(true)}>
-                            { !opponent && <span>Click to pick opponent</span> }
+                            { !opponent && <span style={{ color: "#999" }}>Click to pick opponent</span> }
 
                             { opponent && 
                                 <div className="opponent-choice small">
@@ -100,7 +114,7 @@ const NewGame = ( props ) => {
                         </div>
 
                         <button onClick={rollTheme}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>
                         </button>
                     </div>
                     
@@ -120,10 +134,30 @@ const NewGame = ( props ) => {
                             </div>
                         </div>
                     </div>
+                    
+                    <div className="new-game-item new-game-tiles" style={{height: "auto !important"}}>
+                        <label>Tiles</label>
+                        <div>
+                            Click button to shuffle tiles
+
+                            <div style={{ marginTop: "1em" }}>
+                                <TileGrid tiles={tiles} />
+                            </div>
+                        </div>
+
+                        <button onClick={rollTiles}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>
+                        </button>
+                    </div>
 
                     <button id="startButton" onClick={handleStartGame}
                         className={opponent === null ? 'disabled ' : '' + ( persistingGame ? 'loading' : '')}>
-                        { !persistingGame && <span> Start Game </span> }
+                        { !persistingGame && 
+                            <span> 
+                                Start Game 
+                                <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                            </span> 
+                        }
                         { persistingGame && <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg> }
                     </button>
                 </div>

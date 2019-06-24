@@ -18,6 +18,7 @@
     height: calc(100*var(--vh));
     width: 100vw;
     z-index: 9999;
+    overflow-y: auto;
 }
 
 .newGameContent{
@@ -25,10 +26,37 @@
 }
 
 .new-game-item{
-    height: 55px;
     padding: 1em;
+}
+
+.new-game-item > button{
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(15deg);
+}
+
+.new-game-item:not(.new-game-tiles){
+    height: 55px;
     padding-bottom: 0.6em;
     border-bottom: 1px solid #eee;
+}
+
+.new-game-tiles{
+    padding-top: 1.3em;
+    position: relative;
+    margin-bottom: 4em;
+}
+
+.new-game-tiles > button{
+    position: absolute;
+    right: 1.6em;
+    top: 1.8em;
 }
 
 .new-game-item:first-of-type{
@@ -62,12 +90,6 @@
     height: 30px;
 }
 
-.theme-item button{
-    background: transparent;
-    border: none;
-    outline: none;
-}
-
 .point-picker div{
     display: flex;
     align-items: center;
@@ -90,25 +112,36 @@
 }
 
 #startButton{
-    position: relative;
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
     font-size: 1.1em;
-    min-width: 230px;
     display: block;
-    position: relative;
-    margin: 2em auto;
-    padding: 0.5em 1em;
-    height: 41px;
+    padding: 0.5em 1.2em;
+    padding-right: 0.7em;
     overflow: hidden;
-    border-radius: 1em;
-    background: transparent;
+    border-radius: 35px;
+    background: #333;
+    color: #fff;
     border: 1px solid #ccc;
     outline: none;
+    z-index: 90;
+}
+
+#startButton span{
+    display: flex;
+    align-items: center;
+    line-height: 0;
+}
+
+#startButton span svg{
+    margin-left: 0.6em;
 }
 
 #startButton.disabled,
 #startButton.loading{
-    background: #eee;
-    color: #aaa;
+    background: #555;
+    color: #777;
     pointer-events: none;
 }
 
@@ -117,7 +150,7 @@
     pointer-events: none;
 }
 
-#startButton svg{
+#startButton > svg{
     position: absolute;
     top: 0;
     bottom: 0;
