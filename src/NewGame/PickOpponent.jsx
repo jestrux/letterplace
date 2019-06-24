@@ -10,11 +10,9 @@ const PickOpponent = ( props ) => {
     const [ opponentChoices, setOpponentChoices ] = useState(null);
 
     useEffect(() => {
-        if(!loading && !opponentChoices){
-            setLoading(true);
-            fetchOpponents();
-        }
-    });
+        setLoading(true);
+        fetchOpponents();
+    }, []);
 
     function fetchOpponents(){
         const playersRef = db.collection("users");

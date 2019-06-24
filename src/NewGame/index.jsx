@@ -7,7 +7,7 @@ import PickOpponent from './PickOpponent';
 import './styles.css';
 
 import { themes, sampleGame, getTilesImage } from '../LetterPlaceHelpers'
-import { AuthUser } from '../App';
+import { AuthUser, EM } from '../App';
 import generateRandomLeters from '../RandomLetters';
 
 const NewGame = ( props ) => {
@@ -20,7 +20,15 @@ const NewGame = ( props ) => {
     const [ tiles, setTiles ] = useState([]);
 
     useEffect(() => {
+        EM.on('back-pressed', () => {
+            console.log("Picking opponent: ", pickingOpponent);
+            if(pickingOpponent)
+                setPickingOpponent(false);
+            else
+                props.onClose();
+        });
         rollTiles();
+        console.log("New game mounted");
     }, []);
     
     function rollTiles(){
@@ -64,7 +72,7 @@ const NewGame = ( props ) => {
         setPersistingGame(true);
         dbref.set(game).then(() => {
             console.log("Game persisted!");
-            props.onStartGame(game);
+            props.onGameCreated(game);
         })
     }
 
@@ -121,7 +129,7 @@ const NewGame = ( props ) => {
                     <div className="new-game-item point-picker">
                         <label>Points</label>
                         <div>
-                            { points }
+                            {/* { points } */}
                             {/* <input type="range" min="5" max="25" step="5" onChange={(e) => setPoints(e.target.value)} /> */}
 
                             <div>
