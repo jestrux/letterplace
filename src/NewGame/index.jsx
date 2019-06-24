@@ -16,7 +16,7 @@ const NewGame = ( props ) => {
     const [ opponent, setOpponent ] = useState(null);
     const [ pickingOpponent, setPickingOpponent ] = useState(false);
     const [ themeIndex, setThemeIndex ] = useState(0);
-    const [ points, setPoints ] = useState(5);
+    const [ stakes, setStakes ] = useState(5);
     const [ tiles, setTiles ] = useState([]);
 
     useEffect(() => {
@@ -64,7 +64,7 @@ const NewGame = ( props ) => {
             player2: { ...opponent, points: 0 },
             tiles,
             colors: themes[themeIndex],
-            stakes: points,
+            stakes,
             summary_image: getTilesImage(tiles, themes[themeIndex])
         };
 
@@ -89,7 +89,7 @@ const NewGame = ( props ) => {
 		</div>
     );
 
-    const pointChoices = [5, 10, 15, 20, 25];
+    const stakeChoices = [5, 10, 15, 20, 25];
 
     return (
         <div className="newGameWrapper">
@@ -130,16 +130,13 @@ const NewGame = ( props ) => {
                     </div>
                     
                     <div className="new-game-item point-picker">
-                        <label>Points</label>
+                        <label>Stakes</label>
                         <div>
-                            {/* { points } */}
-                            {/* <input type="range" min="5" max="25" step="5" onChange={(e) => setPoints(e.target.value)} /> */}
-
                             <div>
                                 {
-                                    pointChoices.map(point => (
-                                        <button key={point} className={points === point ? 'selected' : ''} 
-                                            onClick={() => setPoints(point)}>{point}</button>
+                                    stakeChoices.map(amount => (
+                                        <button key={amount} className={stakes === amount ? 'selected' : ''} 
+                                            onClick={() => setStakes(amount)}>{amount}</button>
                                     ))
                                 }
                             </div>
@@ -149,7 +146,7 @@ const NewGame = ( props ) => {
                     <div className="new-game-item new-game-tiles" style={{height: "auto !important"}}>
                         <label>Tiles</label>
                         <div>
-                            <div style={{ marginTop: "0.6em" }}>
+                            <div style={{ marginTop: "1.1em" }}>
                                 <TileGrid tiles={tiles} />
                             </div>
                         </div>
