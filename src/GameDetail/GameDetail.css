@@ -315,7 +315,8 @@
     stroke-width: 2.5px;
 }
 
-#GameDetail.show-last-played .GameTile.last-played{
+#GameDetail.show-last-played .GameTile.last-played,
+.GameTile.wobble{
     /* Fixes for pixalation during animation */
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
