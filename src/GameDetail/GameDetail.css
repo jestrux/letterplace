@@ -18,6 +18,10 @@
     z-index: -1;
 }
 
+#backButton, #clearButton{
+    -webkit-tap-highlight-color: rgba(138, 195, 74, 0.31);
+}
+
 #gamePlayers, #gameTiles{
     display: flex;
 }

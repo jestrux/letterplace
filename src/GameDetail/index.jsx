@@ -404,7 +404,7 @@ class GameDetail extends React.Component {
     
                 { playing && 
                     <React.Fragment>
-                        <button onClick={ this.clearPlayedTiles }>clear</button>
+                        <button id="clearButton" onClick={ this.clearPlayedTiles }>clear</button>
                         <button id="submitBtn"
                             onClick={ this.submitPlayedWord }
                             className={ (invalidWord ? 'disabled ' : '') + (subWordAlreadyPlayed ? 'error' : '') }>submit</button>
