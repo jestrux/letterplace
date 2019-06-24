@@ -1,8 +1,10 @@
 import React from 'react';
+import { getTileBg } from '../LetterPlaceHelpers';
 import './GameTile.css';
 
 const GameTile = ( props ) => {
-    const { tile, background, hidden } = props;
+    const { tile, themeColors, hidden } = props;
+    const background= tile.owner === - 1 ? null : getTileBg(themeColors[tile.owner], tile.locked);
 
     const tileStyles = {
         backgroundColor: background,

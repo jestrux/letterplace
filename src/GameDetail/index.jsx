@@ -5,7 +5,7 @@ import './GameDetail.css';
 
 import GameToolbar from '../GameToolbar';
 import GameTile from './GameTile';
-import { getLoaderImage, getTilesImage, getTileBg, isSurrounded } from '../LetterPlaceHelpers';
+import { getLoaderImage, getTilesImage, isSurrounded } from '../LetterPlaceHelpers';
 import { db } from '../data/firebase';
 import { sendTurnNotification, sendNewGameNotification, showGameOverMessage } from '../data/methods';
 import Toast from '../Toast';
@@ -432,7 +432,7 @@ class GameDetail extends React.Component {
                                         key={ index } 
                                         tile={tile}
                                         onClicked={ () => this.unPlayTile(index) }
-                                        background={ tile.owner === - 1 ? null : game.colors[tile.owner] } />
+                                        themeColors={ game.colors }/>
                                 ))
                             }
                         </div>
@@ -447,7 +447,7 @@ class GameDetail extends React.Component {
                                             tile={tile} 
                                             onClicked={ () => this.playTile(index, tile) }
                                             hidden={hidden}
-                                            background={ tile.owner === - 1 ? null : getTileBg(game.colors[tile.owner], tile.locked) } />
+                                            themeColors={ game.colors } />
                                     );
                                 })
                             }
