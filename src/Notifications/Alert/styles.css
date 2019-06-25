@@ -1,0 +1,70 @@
+.lp-alert, .lp-alert .lp-alert-bg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.lp-alert{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    pointer-events: none;
+    padding: 1em;
+}
+
+.lp-alert .lp-alert-bg,
+.lp-alert .lp-alert-content{
+    opacity: 0;
+}
+
+.lp-alert.open .lp-alert-bg,
+.lp-alert.open .lp-alert-content{
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.lp-alert .lp-alert-bg{
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.lp-alert .lp-alert-content{
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 300px;
+    padding: 2em 1.5em;
+    position: relative;
+    z-index: 1;
+}
+
+.lp-alert .lp-alert-content h1{
+    display: block;
+    font-size: 1.5em;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0.7em;
+}
+
+.lp-alert .lp-alert-content button{
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    background: transparent;
+    border: 2px solid #333;
+    border-radius: 50px;
+    height: 45px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+.lp-alert .lp-alert-content button:not(:last-child){
+    margin-bottom: 0.7em;
+}

@@ -1,41 +1,46 @@
-import React from 'react';
-import classnames from 'classnames/bind';
+import React, { useState, useEffect } from 'react';
+import ReactDom from 'react-dom';
+import './styles.css';
 
-import styles from './styles.scss';
-import FlButton from '../FlButton';
+const alertRoot = document.querySelector('#alertRoot');
 
-const cx = classnames.bind(styles);
+const Alert = (props) => {
+    const { id, title, children, actions, onClose, closeText = 'Close'} = props;
+    const [open, setOpen] = useState(false);
 
-const FlAlert = (props) => {
-    const { children, title, message, onCancel, onOkay, cancelText = 'Cancel', okText = 'Okay'} = props;
+    useEffect(() => {
+        setOpen(true);
 
-    return ( 
-        <div className={cx('finlink-alert')}>
-            <div className={cx('finlink-alert-content')}>
-                {   title && title.length > 0 && <h2>{ title } </h2> }
-                
-                { message && <p className="alert-body" dangerouslySetInnerHTML={ {__html: message} } /> }
+        return () => {
+            setOpen(false);
+        };
+    }, []);
+    
+    return ReactDom.createPortal( 
+        <div id={id} className={'lp-alert ' + (open ? 'open' : '')}>
+            <div className="lp-alert-bg" onClick={onClose}></div>
+            <div className="lp-alert-content">
+                { title && title.length > 0 && <h1>{ title } </h1> }
 
                 { children }
 
-                { (onCancel || onOkay) && 
-                    <div className={cx('finlink-alert-buttons')}>
-                        { onCancel && 
-                            <FlButton flat onClick={onCancel} primary={!onOkay}>
-                                { cancelText }
-                            </FlButton>
-                        }
+                <div style={{paddingTop: '1.5em'}}>
+                    { actions &&
+                        Object.entries(actions).map(([text, callback]) => 
+                            <button key={text} onClick={() => { onClose(); callback.call(); }}>
+                                { text }
+                            </button>
+                        )
+                    }
 
-                        { onOkay &&
-                            <FlButton flat onClick={onOkay} primary>
-                                { okText }
-                            </FlButton>
-                        }
-                    </div>
-                }
+                    <button onClick={onClose}>
+                        { closeText }
+                    </button>
+                </div>
             </div>
-        </div>
+        </div>,
+        alertRoot
     );
 }
  
-export default FlAlert;
+export default Alert;
