@@ -3,9 +3,7 @@
 // Animations: https://www.youtube.com/watch?v=a_Ew0FDSLzs
 
 import React, { Component } from 'react';
-import _findIndex from 'lodash/findIndex';
 import EventEmitter from 'EventEmitter';
-import './App.css';
 
 import Login from './Login';
 import GameList from './GameList';
@@ -15,6 +13,9 @@ import { db, auth, messaging } from './data/firebase';
 import { compareValues } from './LetterPlaceHelpers';
 import { getGameById, showGameOverMessage } from './data/methods';
 import NewGame from './NewGame';
+import Notifications from './Notifications';
+
+import './App.css';
 
 export const AuthUser = React.createContext(null);
 
@@ -232,48 +233,52 @@ class App extends Component {
     const loadingLocalUser = sessionUserFetched && sessionUser && !user;
     
     return (
-      <AuthUser.Provider value={this.state.user}>
-        <React.Fragment>
-          { (!sessionUserFetched || loadingLocalUser) && 
-            <div className="loader"> 
-              <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
-            </div>
-          }
+      <Notifications>
+        <AuthUser.Provider value={this.state.user}>
+          <React.Fragment>
+            <Notifications />
 
-          { sessionUserFetched && user === null && <Login sessionUser={sessionUser} onLogin={this.handleLogin} /> }
+            { (!sessionUserFetched || loadingLocalUser) && 
+              <div className="loader"> 
+                <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style={ { background: 'none'} }><circle cx="50" cy="50" fill="none" stroke="currentColor" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(269.874 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
+              </div>
+            }
 
-          { user !== null && 
-            <div className="App">          
-              <GameList 
-                user={user} 
-                currentGame={cur_game}
-                games={games} 
-                loading={fetchingGames}
-                newGameId={newGameId}
-                onCreateGame={ this.handleCreateGame }
-                onViewGame={(idx, image) => this.handleViewGame(idx, image) }
-                onRefreshGames={ this.fetchUserGames }
-                onLogout={this.handleLogout}/>
-              
-              { (cur_page === 'game-detail' || window.innerWidth > 800) && games.length > 0 && 
-                <GameDetail
+            { sessionUserFetched && user === null && <Login sessionUser={sessionUser} onLogin={this.handleLogin} /> }
+
+            { user !== null && 
+              <div className="App">          
+                <GameList 
                   user={user} 
-                  game={games.find(g => g.id === cur_game)}
-                  curGameImage={this.state.curGameImage}
-                  closingCurGame={this.state.closingCurGame}
-                  onGoHome={ this.handleGoHome }
-                  onGameChanged={ this.handleGameChanged } />}
-                  
-                { cur_page === 'new-game' && 
-                  <NewGame 
-                    onClose={ this.handleGoHome } 
-                    onGameCreated={ this.handleGameCreated } 
-                  /> 
-                }
-            </div>
-          }
-        </React.Fragment>
-      </AuthUser.Provider>
+                  currentGame={cur_game}
+                  games={games} 
+                  loading={fetchingGames}
+                  newGameId={newGameId}
+                  onCreateGame={ this.handleCreateGame }
+                  onViewGame={(idx, image) => this.handleViewGame(idx, image) }
+                  onRefreshGames={ this.fetchUserGames }
+                  onLogout={this.handleLogout}/>
+                
+                { (cur_page === 'game-detail' || window.innerWidth > 800) && games.length > 0 && 
+                  <GameDetail
+                    user={user} 
+                    game={games.find(g => g.id === cur_game)}
+                    curGameImage={this.state.curGameImage}
+                    closingCurGame={this.state.closingCurGame}
+                    onGoHome={ this.handleGoHome }
+                    onGameChanged={ this.handleGameChanged } />}
+                    
+                  { cur_page === 'new-game' && 
+                    <NewGame 
+                      onClose={ this.handleGoHome } 
+                      onGameCreated={ this.handleGameCreated } 
+                    /> 
+                  }
+              </div>
+            }
+          </React.Fragment>
+        </AuthUser.Provider>
+      </Notifications>
     );
   }
 }
