@@ -4,7 +4,7 @@ import shortid from 'shortid';
 import Alert from './Alert';
 import Toast, { TOAST_DURATION } from './Toast';
 
-const TheContext = React.createContext();
+export const NotificationsContext = React.createContext();
 
 const NOTIFICATION_TYPE = {
     ALERT: "alert", 
@@ -31,7 +31,7 @@ const Reducer = (state, action) => {
 }
 
 function TheUI(){
-    const {notifications, closeNotification} = useContext(TheContext);
+    const {notifications, closeNotification} = useContext(NotificationsContext);
     return (
         notifications.map(({content, ...notification}) => {
             if(notification.type === NOTIFICATION_TYPE.ALERT){
@@ -55,7 +55,26 @@ function TheUI(){
 }
 
 export const useNotify = () => {
-    const { showNotification } = useContext(TheContext);
+    const { Alert, Toast } = useContext(NotificationsContext);
+    return { Alert, Toast };
+}
+
+const Notifications = ({ children }) => {
+    const [notifications, dispatch] = useReducer(Reducer, []);
+
+    const showNotification = (notification) => {
+        dispatch({type: NOTIFICATION_ACTION.ADD, notification});
+
+        if(notification.type === NOTIFICATION_TYPE.TOAST){
+            setTimeout(() => {
+                closeNotification(notification.id);
+            }, notification.duration);
+        }
+    }
+
+    const closeNotification = (notificationId) => {
+        dispatch({type: NOTIFICATION_ACTION.REMOVE, notificationId});
+    }
 
     const Alert = (title, content, actions) => {
         const contentIsJsX = React.isValidElement(content);
@@ -78,37 +97,19 @@ export const useNotify = () => {
         });
     }
 
-    return { Alert, Toast };
-}
-
-const Notifications = ({ children }) => {
-    const [notifications, dispatch] = useReducer(Reducer, []);
-
-    const showNotification = (notification) => {
-        dispatch({type: NOTIFICATION_ACTION.ADD, notification});
-
-        if(notification.type === NOTIFICATION_TYPE.TOAST){
-            setTimeout(() => {
-                closeNotification(notification.id);
-            }, notification.duration);
-        }
-    }
-
-    const closeNotification = (notificationId) => {
-        dispatch({type: NOTIFICATION_ACTION.REMOVE, notificationId});
-    }
-
     const contextData = {
         notifications,
         showNotification,
-        closeNotification
+        closeNotification,
+        Alert,
+        Toast
     };
 
     return(
-        <TheContext.Provider value={contextData}>
+        <NotificationsContext.Provider value={contextData}>
             <TheUI />
             { children }
-        </TheContext.Provider>
+        </NotificationsContext.Provider>
     );
 }
 
