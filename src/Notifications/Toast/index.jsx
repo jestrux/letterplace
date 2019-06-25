@@ -1,22 +1,33 @@
-import React from 'react';
-import classnames from 'classnames/bind';
+import React, { useState, useEffect } from 'react';
+import ReactDom from 'react-dom';
 
-import styles from './styles.scss';
+import './styles.css';
 
-const cx = classnames.bind(styles);
+const toastRoot = document.querySelector('#toastRoot');
 
-class FlToast extends React.Component {
-    render() { 
-        const { message } = this.props;
-        
-        return (
-            <div className="finlink-toast-notifications">
-                <div className={cx('finlink-toast')}>
-                    { message }
-                </div>
-            </div>
-        );
-    }
+export const TOAST_DURATION = {
+    SHORT: 2000,
+    LONG: 3500
+};
+
+const Toast = ({ children, duration }) => {
+    const [hide, setHide] = useState(false);
+    useEffect(() => {
+        var hideTimer = setTimeout(() => {
+            setHide(true);
+        }, duration);
+
+        return () => {
+            clearTimeout(hideTimer);
+        };
+    }, []);
+    
+    return ReactDom.createPortal(
+        <div className={'lp-toast ' + (hide ? 'hide' : '')}>
+            { children }
+        </div>,
+        toastRoot
+    );
 }
 
-export default FlToast;
+export default Toast;

@@ -1,0 +1,23 @@
+.lp-toast{
+    padding: 0.6em 1.3em;
+    border: 1px solid #909090;
+    background: rgba(0, 0, 0, 0.59);
+    color: #d6d6d6;
+    border-radius: 20px;
+    line-height: 1.1em;
+    letter-spacing: 0.03em;
+    max-width: 280px;
+}
+
+.lp-toast > p{
+    margin: 0;
+}
+
+.lp-toast.hide{
+    animation: hideToast 0.25s ease-out forwards;
+}
+
+@keyframes hideToast{
+    from{opacity: 1}
+    to{opacity: 0}
+}
