@@ -42,11 +42,11 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF",
-  "splash_pages": null
+  "splash_pages": null,
+  "gcm_sender_id": "658174549550"
 }
