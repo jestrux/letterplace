@@ -78,7 +78,7 @@ const Notifications = ({ children }) => {
 
     const Alert = (title, content, actions) => {
         const contentIsJsX = React.isValidElement(content);
-        content = contentIsJsX ? content : <p>{content}</p>
+        content = contentIsJsX ? content : <p>{content}</p>;
         const notification = { title, content, actions };
         showNotification({
             id: shortid.generate(),
