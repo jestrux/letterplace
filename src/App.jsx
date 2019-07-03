@@ -11,9 +11,9 @@ import GameDetail from './GameDetail';
 
 import { db, auth, messaging } from './data/firebase';
 import { compareValues } from './LetterPlaceHelpers';
-import { getGameById, showGameOverMessage } from './data/methods';
+import { getGameById, getGameOverMessage } from './data/methods';
 import NewGame from './NewGame';
-import Notifications from './Notifications';
+import Notifications, { NotificationsContext } from './Notifications';
 
 import './App.css';
 
@@ -110,7 +110,13 @@ class App extends Component {
           games.sort(compareValues('updated_at', 'desc'));
           this.setState({ games }, () => {
             if(game.over){
-              showGameOverMessage(game, this.state.user.id);
+              const { Alert, Toast } = this.context;
+              const content = getGameOverMessage(game, this.props.user.id, true);
+              const actions = { 
+                  "Request Rematch": () => Toast("Sure you want a rematch...")
+              };
+              Alert("Game Over", content, actions);
+              getGameOverMessage(game, this.state.user.id);
             }
           });
         } catch (error) {
@@ -259,7 +265,7 @@ class App extends Component {
                   onRefreshGames={ this.fetchUserGames }
                   onLogout={this.handleLogout}/>
                 
-                { (cur_page === 'game-detail' || window.innerWidth > 800) && games.length > 0 && 
+                { cur_page === 'game-detail' && games && games.length > 0 && 
                   <GameDetail
                     user={user} 
                     game={games.find(g => g.id === cur_game)}
@@ -282,5 +288,7 @@ class App extends Component {
     );
   }
 }
+
+App.contextType = NotificationsContext;
 
 export default App;

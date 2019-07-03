@@ -7,8 +7,9 @@ import GameToolbar from '../GameToolbar';
 import GameTile from './GameTile';
 import { getLoaderImage, getTilesImage, isSurrounded } from '../LetterPlaceHelpers';
 import { db } from '../data/firebase';
-import { sendTurnNotification, sendNewGameNotification, showGameOverMessage } from '../data/methods';
-import Toast from '../Toast';
+import { sendTurnNotification, sendNewGameNotification, getGameOverMessage } from '../data/methods';
+import UiToast from '../Toast';
+import { NotificationsContext } from '../Notifications';
 
 class GameDetail extends React.Component {
     state = { 
@@ -41,6 +42,7 @@ class GameDetail extends React.Component {
 
     setupGame = (props) => {
         let { game } = props;
+        
         const stateGame = _cloneDeep(this.state.game);
         const updatedFromNotfication = stateGame && stateGame.id === game.id;
         if(game && game.players){
@@ -51,8 +53,20 @@ class GameDetail extends React.Component {
                     this.flipTileGrid();
                 if(!game.over)
                     this.showLastPlayedIfTurn(game);
+                else
+                    this.showGameOverAlert(game);
             });
         }
+    }
+
+    showGameOverAlert(game){
+        const { user } = this.props;
+        const { Alert, Toast } = this.context;
+        const content = getGameOverMessage(game, user.id, true);
+        const actions = { 
+            "Request Rematch": () => Toast("Sure you want a rematch...")
+        };
+        Alert("Game Over", content, actions);
     }
 
     showLastPlayedIfTurn(game){
@@ -235,6 +249,7 @@ class GameDetail extends React.Component {
     }
 
     submitPlayedWord = () => {
+        const { Alert } = this.context;
         let {game, playedTiles, playedWord} = this.state;
         game = _cloneDeep(game);
         const { players, words } = game;
@@ -242,16 +257,17 @@ class GameDetail extends React.Component {
         const notTurn = game.turn !== curUserIdx;
 
         if(notTurn){
-            return alert("Please wait your turn!!!");
+            Alert("Not your turn", <center>Please wait your turn to play</center>);
+            return;
         }
 
         let parentWord = words && words.length ? _find(words, w => w.word.indexOf(playedWord) !== -1) : null;
         if(parentWord){
             parentWord = parentWord.word;
             if(parentWord.length === playedWord.length)
-                window.alert(`${playedWord} was already played!`);
+                Alert("", <center><strong>{playedWord}</strong> was already played!</center>);
             else
-                window.alert(`${playedWord} is subword of ${parentWord}`);
+                Alert("", <center><strong>{playedWord}</strong> is subword of <strong>{parentWord}</strong></center>);
         }else{
             const playedTileIndexes = playedTiles.map(t => t.original_index);
             const newWord = {
@@ -330,15 +346,17 @@ class GameDetail extends React.Component {
                 this.clearPlayedTiles();
                 this.props.onGameChanged(game);
                 this.setSavingLoader(false);
-
-                if(game.over)
-                    showGameOverMessage(game, this.props.user.id);
+                
+                if(game.over){
+                    this.showGameOverAlert(game);
+                }
 
                 this.notifyOtherPlayer(game);
             })
             .catch(() => {
                 this.clearPlayedTiles();
-                window.alert("Failed to save game");
+                const { Alert } = this.context;
+                Alert("Game not saved", "Please check your internet and try again.");
             });
     }
 
@@ -437,9 +455,9 @@ class GameDetail extends React.Component {
                             </div>
 
                             { showLastPlayedTiles &&
-                                <Toast style={{ top: '4em', left: '50%', transform: 'translateX(-50%)' }}>
+                                <UiToast style={{ top: '4em', left: '50%', transform: 'translateX(-50%)' }}>
                                     <div dangerouslySetInnerHTML={{__html: turnMessage}}></div>
-                                </Toast>
+                                </UiToast>
                             }
                         </div>
                         <div id="playedTiles" className={ playing ? 'visible' : '' }>
@@ -483,5 +501,7 @@ class GameDetail extends React.Component {
         );
     }
 }
+
+GameDetail.contextType = NotificationsContext;
  
 export default GameDetail;
