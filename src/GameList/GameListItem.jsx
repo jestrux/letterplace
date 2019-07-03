@@ -39,11 +39,11 @@ const GameListItem = ( props ) => {
     }
 
     function handleGameClicked(e){
-        const el = e.currentTarget;
+        const el = e.currentTarget.querySelector("#preview");
         el.style.opacity = 0;
         setTimeout(() => {
             el.style.opacity = 1;
-        }, 300);
+        }, 350);
         props.onClicked();
     }
 
