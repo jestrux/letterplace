@@ -6,7 +6,7 @@
     "EventEmitter": "^1.0.0",
     "axios": "^0.18.0",
     "firebase": "^5.5.5",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "react": "16.8.4",
     "react-dom": "16.8.4",
     "react-scripts": "2.1.8",
