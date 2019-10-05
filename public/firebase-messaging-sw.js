@@ -16,11 +16,13 @@ messaging.setBackgroundMessageHandler(function(payload) {
     var notificationTitle = payload.data.title || 'Letterplace Notification';
     var notificationOptions = {
       body: payload.data.body || "Click to go to app.",
+      // icon: payload.data.icon
       icon: 'https://letterplace.herokuapp.com/static/media/logo.f81f4c25.png'
     };
+    var gameId = payload.data.gameId;
 
     self.addEventListener('notificationclick', event => {
-      const rootUrl = new URL('/', location).href;
+      const rootUrl = new URL('/#view/' + gameId, location).href;
       event.notification.close();
       // Enumerate windows, and call window.focus(), or open a new one.
       event.waitUntil(
@@ -30,7 +32,7 @@ messaging.setBackgroundMessageHandler(function(payload) {
               return client.focus();
             }
           }
-          return clients.openWindow("/");
+          return clients.openWindow('/#view/' + gameId);
         })
       );
     });
