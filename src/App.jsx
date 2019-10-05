@@ -281,7 +281,7 @@ class App extends Component {
                     closingCurGame={this.state.closingCurGame}
                     onGoHome={ this.handleGoHome }
                     onGameChanged={ this.handleGameChanged }
-                    onMounted={this.handleDetailMounted} />}
+                    onMount={this.handleDetailMounted} />}
                     
                   { cur_page === 'new-game' && 
                     <NewGame 
