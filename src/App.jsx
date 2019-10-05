@@ -168,11 +168,9 @@ class App extends Component {
     });
   }
 
-  handleDetailMounted = () => {
-    if(!this.state.detailMountedFromView)
-      this.fetchUserGames();
-    
-    this.setState({detailMountedFromView: false});
+  handleRestored = () => {
+    this.fetchUserGames();
+    // this.setState({detailMountedFromView: false});
   }
 
   handleLogin = (user) => {
@@ -271,6 +269,7 @@ class App extends Component {
                   onCreateGame={ this.handleCreateGame }
                   onViewGame={(idx, image) => this.handleViewGame(idx, image) }
                   onRefreshGames={ this.fetchUserGames }
+                  onRestore={this.handleRestored}
                   onLogout={this.handleLogout}/>
                 
                 { cur_page === 'game-detail' && games && games.length > 0 && 
@@ -280,8 +279,8 @@ class App extends Component {
                     curGameImage={this.state.curGameImage}
                     closingCurGame={this.state.closingCurGame}
                     onGoHome={ this.handleGoHome }
-                    onGameChanged={ this.handleGameChanged }
-                    onMount={this.handleDetailMounted} />}
+                    onGameChanged={ this.handleGameChanged } />
+                  }
                     
                   { cur_page === 'new-game' && 
                     <NewGame 
