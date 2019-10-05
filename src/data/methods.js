@@ -129,8 +129,10 @@ export const sendTurnNotification = async function (player, otherPlayerId, game)
             //     "click_action": APP_URL
             // },
             "data": {
+                "gameId": game.id,
                 "action": "game-changed",
-                "gameId": game.id
+                "title": "Your Turn",
+                "body": `${player} played ${game.lastword}, new score: ${score}`,
             }
         };
 
@@ -151,8 +153,10 @@ export const sendNewGameNotification = async function (player, otherPlayerId, ga
             //     "click_action": APP_URL
             // },
             "data": {
+                "gameId": game.id,
                 "action": "new-game",
-                "gameId": game.id
+                "title": "New Game",
+                "body": `${player} played ${game.lastword}`
             }
         }
 

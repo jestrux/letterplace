@@ -13,9 +13,9 @@ const messaging = firebase.messaging();
 
 messaging.setBackgroundMessageHandler(function(payload) {
     console.log('[firebase-messaging-sw.js] Received background message ', payload);
-    var notificationTitle = payload.notification.title || 'Letterplace Notification';
+    var notificationTitle = payload.data.title || 'Letterplace Notification';
     var notificationOptions = {
-      body: payload.notification.body || "Click to go to app.",
+      body: payload.data.body || "Click to go to app.",
       icon: 'https://letterplace.herokuapp.com/static/media/logo.f81f4c25.png'
     };
 
