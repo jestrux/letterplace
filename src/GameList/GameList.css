@@ -3,7 +3,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 35px;
+    height: 50px;
     width: 100%;
     z-index: 100;
     display: block;
@@ -11,7 +11,7 @@
     background-color: #efffdc;
     color: #618439;
     border: 0 solid #c5fd87;
-    border-width: 1px;
+    border-width: 1px 0 0 0;
     display: flex;
     align-items: center;
     justify-content: center;
