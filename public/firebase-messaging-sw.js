@@ -16,8 +16,8 @@ messaging.setBackgroundMessageHandler(function(payload) {
     var notificationTitle = payload.data.title || 'Letterplace Notification';
     var notificationOptions = {
       body: payload.data.body || "Click to go to app.",
-      // icon: payload.data.icon
-      icon: 'https://letterplace.herokuapp.com/static/media/logo.f81f4c25.png'
+      icon: payload.data.icon
+      // icon: 'https://letterplace.herokuapp.com/static/media/logo.f81f4c25.png'
     };
     var gameId = payload.data.gameId;
 

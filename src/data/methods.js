@@ -132,7 +132,7 @@ export const sendTurnNotification = async function (player, otherPlayerId, game)
                 "gameId": game.id,
                 "action": "game-changed",
                 "title": "Your Turn",
-                // "icon": "data:image/png;base64," + game.summary_image,
+                "icon": "data:image/png;base64," + game.summary_image,
                 "body": `${player} played ${game.lastword}, new score: ${score}`,
             }
         };
@@ -157,7 +157,7 @@ export const sendNewGameNotification = async function (player, otherPlayerId, ga
                 "gameId": game.id,
                 "action": "new-game",
                 "title": "New Game",
-                // "icon": "data:image/png;base64," + game.summary_image,
+                "icon": "data:image/png;base64," + game.summary_image,
                 "body": `${player} played ${game.lastword}`
             }
         }
