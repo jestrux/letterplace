@@ -32,7 +32,8 @@ class App extends Component {
     closingCurGame: false,
     sessionUserFetched: false,
     sessionUser: null,
-    newGameId: null
+    newGameId: null,
+    detailMountedFromView: false
   };
 
   componentWillMount(){
@@ -225,7 +226,7 @@ class App extends Component {
     const idString = "GameListItem"+id;
     const image = document.querySelector(`#${idString} #preview`);
     window.history.pushState({page: 'game-detail', gameId: id}, 'View Game ' + id, '#view/'+id);
-    this.setState({cur_page: 'game-detail', cur_game: id, curGameImage: image});
+    this.setState({cur_page: 'game-detail', cur_game: id, curGameImage: image, detailMountedFromView: true});
   }
 
   handleCreateGame = () => {
