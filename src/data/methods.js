@@ -121,13 +121,13 @@ export const sendTurnNotification = async function (player, otherPlayerId, game)
     try {
         const score = game.player1.points + " - " + game.player2.points;
         const notification = {
-            "notification": {
-                "title": "Your Turn",
-                "body": `${player} played ${game.lastword}, new score: ${score}`,
-                "icon": "data:image/png;base64," + game.summary_image,
-                // "click_action": APP_URL + "?source=notification/#view/" + game.id
-                "click_action": APP_URL
-            },
+            // "notification": {
+            //     "title": "Your Turn",
+            //     "body": `${player} played ${game.lastword}, new score: ${score}`,
+            //     "icon": "data:image/png;base64," + game.summary_image,
+            //     // "click_action": APP_URL + "?source=notification/#view/" + game.id
+            //     "click_action": APP_URL
+            // },
             "data": {
                 "action": "game-changed",
                 "gameId": game.id
@@ -143,13 +143,13 @@ export const sendTurnNotification = async function (player, otherPlayerId, game)
 export const sendNewGameNotification = async function (player, otherPlayerId, game) {
     try {
         const notification = {
-            "notification": {
-                "title": "New Game",
-                "body": `${player} played ${game.lastword}`,
-                "icon": "data:image/png;base64," + game.summary_image,
-                // "click_action": APP_URL + "?source=notification/#view/" + game.id
-                "click_action": APP_URL
-            },
+            // "notification": {
+            //     "title": "New Game",
+            //     "body": `${player} played ${game.lastword}`,
+            //     "icon": "data:image/png;base64," + game.summary_image,
+            //     // "click_action": APP_URL + "?source=notification/#view/" + game.id
+            //     "click_action": APP_URL
+            // },
             "data": {
                 "action": "new-game",
                 "gameId": game.id
