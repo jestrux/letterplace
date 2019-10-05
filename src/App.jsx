@@ -33,7 +33,7 @@ class App extends Component {
     sessionUserFetched: false,
     sessionUser: null,
     newGameId: null,
-    detailMountedFromView: false
+    temporarilyClosed: false
   };
 
   componentWillMount(){
@@ -42,8 +42,17 @@ class App extends Component {
     });
 
     window.addEventListener("focus", () => { 
-        console.log("Regained focus!");
-        this.handleRestored();
+      console.log("Regained focus!");
+      if(this.state.temporarilyClosed){
+        this.setState({temporarilyClosed: false}, () => {
+          this.fetchUserGames();
+        });
+      }
+    }, false);
+    
+    window.addEventListener("focus", () => { 
+        console.log("Lost focus!");
+        this.setState({temporarilyClosed: true});
     }, false);
   }
 
@@ -171,10 +180,6 @@ class App extends Component {
     .catch(function(error) {
         console.log("Error getting documents: ", error);
     });
-  }
-
-  handleRestored = () => {
-    this.fetchUserGames();
   }
 
   handleLogin = (user) => {
