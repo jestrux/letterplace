@@ -22,17 +22,17 @@ messaging.setBackgroundMessageHandler(function(payload) {
     var gameId = payload.data.gameId;
 
     self.addEventListener('notificationclick', event => {
-      const rootUrl = new URL('/#view/' + gameId, location).href;
+      const rootUrl = new URL('https://letterplace.herokuapp.com/#view/' + gameId, location).href;
       event.notification.close();
       // Enumerate windows, and call window.focus(), or open a new one.
       event.waitUntil(
         clients.matchAll().then(matchedClients => {
           for (let client of matchedClients) {
-            if (client.url === rootUrl) {
+            if (client.url.indexOf('letterplace') !== -1) {
               return client.focus();
             }
           }
-          return clients.openWindow('/#view/' + gameId);
+          return clients.openWindow('https://letterplace.herokuapp.com/#view/' + gameId);
         })
       );
     });
