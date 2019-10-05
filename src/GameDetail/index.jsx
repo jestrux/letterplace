@@ -38,6 +38,7 @@ class GameDetail extends React.Component {
     
     componentWillMount(){
         this.setupGame(this.props);
+        this.props.detailMounted();
     }
 
     setupGame = (props) => {

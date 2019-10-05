@@ -167,6 +167,13 @@ class App extends Component {
     });
   }
 
+  handleDetailMounted = () => {
+    if(this.state.detailMountedFromView){
+      this.fetchUserGames();
+    }
+    this.setState({detailMountedFromView: false});
+  }
+
   handleLogin = (user) => {
     this.setState({ user }, () => {
       this.fetchUserGames();
@@ -272,7 +279,8 @@ class App extends Component {
                     curGameImage={this.state.curGameImage}
                     closingCurGame={this.state.closingCurGame}
                     onGoHome={ this.handleGoHome }
-                    onGameChanged={ this.handleGameChanged } />}
+                    onGameChanged={ this.handleGameChanged }
+                    onMounted={this.handleDetailMounted} />}
                     
                   { cur_page === 'new-game' && 
                     <NewGame 
