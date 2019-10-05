@@ -169,9 +169,9 @@ class App extends Component {
   }
 
   handleDetailMounted = () => {
-    if(this.state.detailMountedFromView){
+    if(!this.state.detailMountedFromView)
       this.fetchUserGames();
-    }
+    
     this.setState({detailMountedFromView: false});
   }
 
