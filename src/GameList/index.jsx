@@ -1,11 +1,10 @@
-import React, { useRef, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 
 import GameToolbar from '../GameToolbar';
 import GameListItem from './GameListItem';
 import { messaging } from '../data/firebase';
 import { AuthUser } from '../App';
 import Toast from '../Toast';
-import { NotificationsContext } from '../Notifications';
 import { setUserFcmToken } from '../data/methods';
 
 import './GameList.css';
@@ -17,13 +16,6 @@ const GameList = ( props ) => {
     const [ notificationsAllowed, setNotificationsAllowed ] = useState("Notification" in window && Notification.permission === 'granted');
     const onGoingGames = games.filter(g => !g.over);
     const completedGames = games.filter(g => g.over);
-
-    useRef(() => {
-        window.addEventListener("focus", () => { 
-            props.onRestore();
-            props.Alert("Game Restored", "Triggering fetch games");
-        }, false);
-    }, [])
 
     function allowNotifications(){
         messaging.requestPermission().then(() => {
@@ -130,7 +122,5 @@ const GameList = ( props ) => {
         </React.Fragment>
     );
 }
-
-GameList.contextType = NotificationsContext;
  
 export default GameList;

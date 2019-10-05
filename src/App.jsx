@@ -40,6 +40,11 @@ class App extends Component {
     this.unsubscribeAuthListener = auth.onAuthStateChanged((sessionUser) => {
       this.setState({sessionUserFetched: true, sessionUser});
     });
+
+    window.addEventListener("focus", () => { 
+        console.log("Regained focus!");
+        this.handleRestored();
+    }, false);
   }
 
   connectToUrlAndNotifications = () =>{
@@ -170,7 +175,6 @@ class App extends Component {
 
   handleRestored = () => {
     this.fetchUserGames();
-    // this.setState({detailMountedFromView: false});
   }
 
   handleLogin = (user) => {
@@ -269,7 +273,6 @@ class App extends Component {
                   onCreateGame={ this.handleCreateGame }
                   onViewGame={(idx, image) => this.handleViewGame(idx, image) }
                   onRefreshGames={ this.fetchUserGames }
-                  onRestore={this.handleRestored}
                   onLogout={this.handleLogout}/>
                 
                 { cur_page === 'game-detail' && games && games.length > 0 && 
