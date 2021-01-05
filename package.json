@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "EventEmitter": "^1.0.0",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "firebase": "^5.5.5",
     "lodash": "^4.17.11",
     "react": "16.8.4",
