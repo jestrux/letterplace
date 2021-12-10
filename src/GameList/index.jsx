@@ -114,10 +114,10 @@ const GameList = ( props ) => {
                     </React.Fragment>
                 }
 
-                <button id="gameUpdater" style={ { marginRight: '1.1em' } } 
+                {/* <button id="gameUpdater" style={ { marginRight: '1.1em' } } 
                     onClick={() => window.location.reload(true)}>
                     UPDATE GAME
-                </button>
+                </button> */}
             </div>
         </React.Fragment>
     );
