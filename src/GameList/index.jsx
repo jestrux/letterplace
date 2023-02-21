@@ -18,6 +18,8 @@ const GameList = ( props ) => {
     const completedGames = games.filter(g => g.over);
 
     function allowNotifications(){
+        if(!messaging) return console.log("Push notifications not supported");
+        
         messaging.requestPermission().then(() => {
             console.log('Notification permission granted.');
             setNotificationsAllowed(true);

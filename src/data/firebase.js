@@ -26,7 +26,7 @@ firestore.settings({
 export const base = app;
 export const db = firestore;
 export const auth = app.auth()
-export const messaging = app.messaging();
+export const messaging = Notification ? app.messaging() : null;
 
 export const google_auth_provider = new firebase.auth.GoogleAuthProvider()
 export const fb_auth_provider = new firebase.auth.FacebookAuthProvider()

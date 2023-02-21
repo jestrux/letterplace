@@ -63,6 +63,8 @@ const getUserFCMTokens = function (userId) {
 export const setUserFcmToken = (userId) => {
     console.log("Setting fcm token....");
     return new Promise(async (resolve, reject) => {
+        if(!messaging) reject("Push notifications not supported");
+
         messaging.getToken().then(function (token) {
                 if (token) {
                     const tokenData = {
